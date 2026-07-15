@@ -6,6 +6,7 @@ import io.senftresearch.openrd.RDPoint;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RDHeaderData implements RDData {
@@ -45,6 +46,28 @@ public class RDHeaderData implements RDData {
         stream.write(RDEncoder.encode("-",   "e7 05 00"));
     }
 
+    private void setLayerHeaders(List<RDLayer> layers, ByteArrayOutputStream stream) throws IOException {
+        int layerNumber = 0;
+        for (RDLayer layer : layers) {
+            List<RDPoint> powerArray = new ArrayList<>();
+            //TODO this can be moved out to a method to set power, set RGB etc.
+            while (powerArray.size() < 8) {
+                powerArray.add(layer.power());
+            }
+            int speed = layer.speed();
+
+            RDPoint powerOne = powerArray.get(0);
+            RDPoint powerTwo = powerArray.get(1);
+            RDPoint powerThree = powerArray.get(2);
+            RDPoint powerFour = powerArray.get(3);
+            stream.write(RDEncoder.encode("-bn", "c9 04", layerNumber, speed));
+
+            stream.write(RDEncoder.encode("-bp-bp", "c6 31", layerNumber, powerOne.x(), "c6 32", layerNumber, powerOne.y()));
+            stream.write(RDEncoder.encode("-bp-bp", "c6 41", layerNumber, powerTwo.x(), "c6 42", layerNumber, powerTwo.y()));
+            stream.write(RDEncoder.encode("-bp-bp", "c6 35", layerNumber, powerThree.x(), "c6 36", layerNumber, powerThree.y()));
+            stream.write(RDEncoder.encode("-bp-bp", "c6 37", layerNumber, powerFour.x(), "c6 38", layerNumber, powerFour.y()));
+        }
+    }
     private RDBoundingBox combineBoundingBoxes(RDBoundingBox boundingBox, RDLayer layer) {
         int x0 = Math.min(boundingBox.topLeft().x(), layer.boundingBox().topLeft().x());
         int y0 = Math.min(boundingBox.topLeft().y(), layer.boundingBox().topLeft().y());
