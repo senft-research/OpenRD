@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.util.List;
 
 public class RDHeaderData implements RDData {
-
-    private byte[] data;
     private RDBoundingBox boundingBox;
 
     public RDHeaderData(List<RDLayer> layers, RDBoundingBox globalBoundingBox) {
