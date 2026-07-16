@@ -6,4 +6,8 @@ public record RDColour(int red, int green, int blue) {
             throw new IllegalArgumentException("RGB values must be between 0 and 255");
         }
     }
+
+    public int[] getRGBArray(){
+        return new int[] {red, green, blue};
+    }
 }

@@ -66,7 +66,24 @@ public class RDHeaderData implements RDData {
             stream.write(RDEncoder.encode("-bp-bp", "c6 41", layerNumber, powerTwo.x(), "c6 42", layerNumber, powerTwo.y()));
             stream.write(RDEncoder.encode("-bp-bp", "c6 35", layerNumber, powerThree.x(), "c6 36", layerNumber, powerThree.y()));
             stream.write(RDEncoder.encode("-bp-bp", "c6 37", layerNumber, powerFour.x(), "c6 38", layerNumber, powerFour.y()));
+
+            setLayerBoundingBoxes(layer, layerNumber, stream);
+            layerNumber++;
         }
+    }
+
+    private void setLayerBoundingBoxes(RDLayer layer, int layerNumber, ByteArrayOutputStream stream) throws IOException{
+        int boundBoxTopLeftX = layer.boundingBox().topLeft().x();
+        int boundBoxTopLeftY = layer.boundingBox().topLeft().x();
+        int boundBoxBottomRightX = layer.boundingBox().bottomRight().x();
+        int boundBoxBottomRightY = layer.boundingBox().bottomRight().y();
+        stream.write(RDEncoder.encode("-bc-bb-bnn-bnn-bnn-bnn-",
+                "c6 06", layerNumber, layer.colour().getRGBArray(),
+                "ca 41", layerNumber, 0,
+                "e7 52", layerNumber, boundBoxTopLeftX, boundBoxTopLeftY,
+                "e7 53", layerNumber, boundBoxBottomRightX, boundBoxBottomRightY,
+                "e7 61", layerNumber, boundBoxTopLeftX, boundBoxTopLeftY,
+                "e7 62", layerNumber, boundBoxBottomRightX, boundBoxBottomRightY));
     }
     private RDBoundingBox combineBoundingBoxes(RDBoundingBox boundingBox, RDLayer layer) {
         int x0 = Math.min(boundingBox.topLeft().x(), layer.boundingBox().topLeft().x());
