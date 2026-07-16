@@ -25,6 +25,32 @@ public class RDHeaderData implements RDData {
             """));
 
             setBoundingBoxData(stream);
+            setLayerHeaders(layers, stream);
+
+            //TODO needs separating to its own method
+            int xmin = this.boundingBox.topLeft().x();
+            int ymin = this.boundingBox.topLeft().y();
+            int xmax = this.boundingBox.bottomRight().x();
+            int ymax = this.boundingBox.bottomRight().y();
+            stream.write(RDEncoder.encode(
+                    "-nn-nn-nn-nn-nn-nn-nn-nn-",
+                    "e7 55 00 00 00 00 00 00 e7 55 01 00 00 00 00 00 f1 03 00 00 00 00 00 00 00 00 00 00 f1 00 00 f1 01 00 f2 00 00 f2 01 00 f2 02 05 2a 39 1c 41 04 6a 15 08 20 f2 03",
+                    xmin, ymin,
+                    "f2 04",
+                    xmax, ymax,
+                    "f2 06",
+                    xmin, ymin,
+                    "f2 07 00 f2 05 00 01 00 01",
+                    xmax, ymax,
+                    "ea 00 e7 60 00 e7 13",
+                    xmin, ymin,
+                    "e7 17",
+                    xmax, ymax,
+                    "e7 23",
+                    xmin, ymin,
+                    "e7 24 00 e7 08 00 01 00 01",
+                    xmax, ymax
+            ));
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to assemble header binary streams", e);
