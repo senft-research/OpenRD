@@ -11,8 +11,10 @@ import java.util.List;
 
 public class RDHeaderData implements RDData {
     private RDBoundingBox boundingBox;
+    private ByteArrayOutputStream headerData;
 
     public RDHeaderData(List<RDLayer> layers, RDBoundingBox globalBoundingBox) {
+
         this.boundingBox = globalBoundingBox;
         layers.forEach(layer -> this.boundingBox = combineBoundingBoxes(this.boundingBox, layer));
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -51,7 +53,7 @@ public class RDHeaderData implements RDData {
                     "e7 24 00 e7 08 00 01 00 01",
                     xmax, ymax
             ));
-
+            this.headerData = stream;
         } catch (IOException e) {
             throw new RuntimeException("Failed to assemble header binary streams", e);
         }
@@ -120,7 +122,7 @@ public class RDHeaderData implements RDData {
     }
 
     @Override
-    public String getData() {
-        return "";
+    public ByteArrayOutputStream getData() {
+        return this.headerData;
     }
 }

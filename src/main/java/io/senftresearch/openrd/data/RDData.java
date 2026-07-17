@@ -1,5 +1,7 @@
 package io.senftresearch.openrd.data;
 
+import java.io.ByteArrayOutputStream;
+
 public interface RDData {
-    String getData();
+    ByteArrayOutputStream getData();
 }
