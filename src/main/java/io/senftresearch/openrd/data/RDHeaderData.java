@@ -15,7 +15,6 @@ public class RDHeaderData implements RDData {
 
     public RDHeaderData(List<RDLayer> layers, RDBoundingBox globalBoundingBox) {
 
-        this.boundingBox = globalBoundingBox;
         layers.forEach(layer -> this.boundingBox = combineBoundingBoxes(this.boundingBox, layer));
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {
@@ -29,6 +28,7 @@ public class RDHeaderData implements RDData {
             setBoundingBoxData(stream);
             setLayerHeaders(layers, stream);
 
+            stream.write(RDEncoder.encode("-b-", "ca 22", layers.size()-1, "e7 54 00 00 00 00 00 00 e7 54 01 00 00 00"));
             //TODO needs separating to its own method
             int xmin = this.boundingBox.topLeft().x();
             int ymin = this.boundingBox.topLeft().y();
@@ -36,7 +36,9 @@ public class RDHeaderData implements RDData {
             int ymax = this.boundingBox.bottomRight().y();
             stream.write(RDEncoder.encode(
                     "-nn-nn-nn-nn-nn-nn-nn-nn-",
-                    "e7 55 00 00 00 00 00 00 e7 55 01 00 00 00 00 00 f1 03 00 00 00 00 00 00 00 00 00 00 f1 00 00 f1 01 00 f2 00 00 f2 01 00 f2 02 05 2a 39 1c 41 04 6a 15 08 20 f2 03",
+                    "00 00 e7 55 00 00 00 00 00 00" +
+                            " e7 55 01 00 00 00 00 00 " +
+                            "f1 03 00 00 00 00 00 00 00 00 00 00 f1 00 00 f1 01 00 f2 00 00 f2 01 00 f2 02 05 2a 39 1c 41 04 6a 15 08 20 f2 03",
                     xmin, ymin,
                     "f2 04",
                     xmax, ymax,
@@ -51,7 +53,7 @@ public class RDHeaderData implements RDData {
                     "e7 23",
                     xmin, ymin,
                     "e7 24 00 e7 08 00 01 00 01",
-                    xmax, ymax
+                    xmax, ymax, ""
             ));
             this.headerData = stream;
         } catch (IOException e) {
@@ -102,22 +104,26 @@ public class RDHeaderData implements RDData {
 
     private void setLayerBoundingBoxes(RDLayer layer, int layerNumber, ByteArrayOutputStream stream) throws IOException{
         int boundBoxTopLeftX = layer.boundingBox().topLeft().x();
-        int boundBoxTopLeftY = layer.boundingBox().topLeft().x();
+        int boundBoxTopLeftY = layer.boundingBox().topLeft().y();
         int boundBoxBottomRightX = layer.boundingBox().bottomRight().x();
         int boundBoxBottomRightY = layer.boundingBox().bottomRight().y();
         stream.write(RDEncoder.encode("-bc-bb-bnn-bnn-bnn-bnn-",
-                "c6 06", layerNumber, layer.colour().getRGBArray(),
+                "ca 06", layerNumber, layer.colour().getRGBArray(),
                 "ca 41", layerNumber, 0,
                 "e7 52", layerNumber, boundBoxTopLeftX, boundBoxTopLeftY,
                 "e7 53", layerNumber, boundBoxBottomRightX, boundBoxBottomRightY,
                 "e7 61", layerNumber, boundBoxTopLeftX, boundBoxTopLeftY,
-                "e7 62", layerNumber, boundBoxBottomRightX, boundBoxBottomRightY));
+                "e7 62", layerNumber, boundBoxBottomRightX, boundBoxBottomRightY,""));
     }
     private RDBoundingBox combineBoundingBoxes(RDBoundingBox boundingBox, RDLayer layer) {
-        int x0 = Math.min(boundingBox.topLeft().x(), layer.boundingBox().topLeft().x());
-        int y0 = Math.min(boundingBox.topLeft().y(), layer.boundingBox().topLeft().y());
-        int x1 = Math.max(boundingBox.topLeft().x(), layer.boundingBox().topLeft().x());
-        int y1 = Math.max(boundingBox.bottomRight().y(), layer.boundingBox().bottomRight().y());
+        if(boundingBox == null) return layer.boundingBox();
+        RDBoundingBox layerBox = layer.boundingBox();
+        int x0 = Math.min(boundingBox.topLeft().x(), layerBox.topLeft().x());
+        int y0 = Math.min(boundingBox.topLeft().y(), layerBox.topLeft().y());
+
+        int x1 = Math.max(boundingBox.bottomRight().x(), layerBox.bottomRight().x());
+        int y1 = Math.max(boundingBox.bottomRight().y(), layerBox.bottomRight().y());
+
         return new RDBoundingBox(new RDPoint(x0, y0), new RDPoint(x1, y1));
     }
 

@@ -13,9 +13,10 @@ public class RDEncoder {
         if(format == null || args == null){
             throw new IllegalArgumentException("Args / format cannot be null");
         }
+        int argsLength;
 
         if(format.length() != args.length){
-            throw new IllegalArgumentException("Format '" + format + "' length differs from args length=" + args.length);
+            throw new IllegalArgumentException("Format '" + format + "' length differs from args length=" + args.length + "(Length of format: " + format.length());
         }
 
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
@@ -26,13 +27,15 @@ public class RDEncoder {
                 Object value = args[i];
                 byte[] encoded = switch (formatCharacter) {
                     case '-' -> encodeHex((String) value);
-                    case 'n' -> encodeNumber((double) value);
-                    case 'p' -> encodePercent((double)value);
-                    case 'r' -> encodeRelCoord((double)value);
-                    case 'b' -> encodeByte((double)value);
-                    case 'c' -> encodeColour((int[])value);
+                    // Use ((Number) value).doubleValue() to safely extract the double value
+                    case 'n' -> encodeNumber(((Number) value).doubleValue());
+                    case 'p' -> encodePercent(((Number) value).doubleValue());
+                    case 'r' -> encodeRelCoord(((Number) value).doubleValue());
+                    case 'b' -> encodeByte(((Number) value).doubleValue());
+                    case 'c' -> encodeColour((int[]) value);
                     default  -> throw new IllegalArgumentException("Unknown character in fmt: " + format);
                 };
+
                 byteStream.write(encoded);
             }
         } catch (IOException e) {
