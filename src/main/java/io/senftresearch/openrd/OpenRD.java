@@ -39,10 +39,16 @@ public class OpenRD {
                         ? new RDLayer(layer.paths(), layer.speed(), layer.power(), layer.colour(), layer.frequency(), boundingbox(layer.paths()))
                         : layer)
                 .toList(); // Creates an unmodifiable list (use collect(Collectors.toList()) if you need a mutable one)
+        double[] odo = new double[]{0.0, 0.0};
+        for(RDLayer layer : layers){
+            double[] odoToAdd = odoMeter(layer.paths(), false);
+            odo[0] += odoToAdd[0];
+            odo[1] += odoToAdd[1];
+        }
 
         headerData = new RDHeaderData(layers, globalBoundingBox);
         bodyData = new RDBodyData(layers, globalBoundingBox);
-        trailerData = new RDTrailerData();
+        trailerData = new RDTrailerData(odo);
 
         if(this.headerData == null){
             throw new RuntimeException("Header not initialised!");
@@ -159,6 +165,47 @@ public class OpenRD {
         }
 
         return resB;
+    }
+
+    private double[] odoMeter(List<List<RDPoint>> paths, boolean returnHome){
+        return odometer(paths, new double[]{0.0,0.0}, returnHome);
+    }
+    private double[] odometer(List<List<RDPoint>> paths, double[] init, boolean returnHome){
+        if(paths == null || paths.isEmpty()){
+            return null;
+        }
+        double cutDistance = 0;
+        double travelDistance = 0;
+        boolean travelling;
+        double[] xy = init.clone();
+        for(List<RDPoint> path : paths){
+            travelling = true;
+            for(RDPoint point : path){
+                double[] pointArray = new double[]{point.x(),point.y()};
+                if(travelling){
+                    travelDistance += distXY(xy, pointArray);
+                    xy=pointArray;
+                    travelling = false;
+                }
+                else{
+                    cutDistance += distXY(xy, pointArray);
+                    xy = pointArray;
+                }
+            }
+        }
+        if(returnHome){
+            travelDistance += distXY(xy, init);
+        }
+
+        return new double[]{cutDistance, travelDistance};
+
+
+    }
+
+    private double distXY(double[] point1, double[] point2){
+        double dx = point2[0] - point1[0];
+        double dy = point2[1] - point1[1];
+        return Math.sqrt((dx*dx)+(dy*dy));
     }
 
 
