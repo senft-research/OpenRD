@@ -67,9 +67,9 @@ public class OpenRD {
             bodyData.getData().writeTo(combined);
             trailerData.getData().writeTo(combined);
 
-            /*if(shouldScramble){
+            if(shouldScramble){
                 scrambleStreamInPlace(combined);
-            }*/
+            }
             combined.writeTo(fd);
         }
         catch (IOException e) {
