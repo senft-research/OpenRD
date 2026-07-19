@@ -9,7 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+//TODO need to clean up the logic in this class (taking out the odo calcs, the scramble logic, the bounding box calcs etc)
 public class OpenRD {
     private static OpenRD instance;
     public static OpenRD getInstance(){
