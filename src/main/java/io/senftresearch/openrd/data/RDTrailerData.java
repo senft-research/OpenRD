@@ -1,5 +1,7 @@
 package io.senftresearch.openrd.data;
 
+import io.senftresearch.openrd.encoding.RDEncoder;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 

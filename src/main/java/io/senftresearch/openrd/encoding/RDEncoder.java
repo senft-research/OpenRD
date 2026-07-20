@@ -1,4 +1,4 @@
-package io.senftresearch.openrd.data;
+package io.senftresearch.openrd.encoding;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

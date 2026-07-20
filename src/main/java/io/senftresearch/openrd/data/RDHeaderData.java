@@ -3,6 +3,7 @@ package io.senftresearch.openrd.data;
 import io.senftresearch.openrd.RDBoundingBox;
 import io.senftresearch.openrd.RDLayer;
 import io.senftresearch.openrd.RDPoint;
+import io.senftresearch.openrd.encoding.RDEncoder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
