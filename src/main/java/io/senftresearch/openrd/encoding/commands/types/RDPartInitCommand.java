@@ -1,6 +1,9 @@
-package io.senftresearch.openrd.encoding.commands;
+package io.senftresearch.openrd.encoding.commands.types;
 
-public class RDPartInitCommand extends AbstractRDCommand{
+import io.senftresearch.openrd.encoding.commands.AbstractRDCommand;
+import io.senftresearch.openrd.encoding.commands.RDCommandHex;
+
+public class RDPartInitCommand extends AbstractRDCommand {
     private final RDCommandHex commandHex = RDCommandHex.RD_INIT_COMMAND;
     private int maxLayerArg;
     @Override
