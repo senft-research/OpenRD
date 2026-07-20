@@ -13,12 +13,12 @@ public class RDPartInitCommand extends AbstractRDCommand {
 
     public static class RDPartInitCommandBuilder extends AbstractRDCommandBuilder<RDPartInitCommandBuilder>{
         private Integer maxLayerArg;
+
         @Override
         protected AbstractRDCommand create() {
             RDPartInitCommand command = new RDPartInitCommand();
             command.maxLayerArg = maxLayerArg;
             return command;
-
         }
 
         @Override
