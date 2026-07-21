@@ -4,6 +4,11 @@ import io.senftresearch.openrd.RDBoundingBox;
 import io.senftresearch.openrd.RDLayer;
 import io.senftresearch.openrd.RDPoint;
 import io.senftresearch.openrd.encoding.RDEncoder;
+import io.senftresearch.openrd.encoding.commands.RDCommand;
+import io.senftresearch.openrd.encoding.commands.types.RDRefPointModeCommand;
+import io.senftresearch.openrd.encoding.commands.types.RDRefPointSetCommand;
+import io.senftresearch.openrd.encoding.commands.types.process.ProcessType;
+import io.senftresearch.openrd.encoding.commands.types.process.RDProcessCommand;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,11 +25,17 @@ public class RDHeaderData implements RDData {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {
             // Not sure what this does
-            stream.write(RDEncoder.encodeHex("""
-            d8 12           # Red Light on ?
-            f0 f1 02 00     # file type ?
-            d8 00           # Green Light off ?
-            """));
+            RDCommand refPointModeCommand = new RDRefPointModeCommand
+                    .RDRefPointModeCommandBuilder()
+                    .withPointMode(0)
+                    .build();
+            RDCommand refPointSetCommand = new RDRefPointSetCommand();
+            RDCommand processStartCommand = new RDProcessCommand(ProcessType.START);
+
+            stream.write(RDEncoder.encodeHex((String) refPointModeCommand.getCommandArgs()[0]));
+            stream.write(RDEncoder.encodeHex((String) refPointSetCommand.getCommandArgs()[0]));
+            stream.write(RDEncoder.encodeHex("f1 02 00"));
+            stream.write(RDEncoder.encodeHex((String) processStartCommand.getCommandArgs()[0]));
 
             setBoundingBoxData(stream);
             setLayerHeaders(layers, stream);
