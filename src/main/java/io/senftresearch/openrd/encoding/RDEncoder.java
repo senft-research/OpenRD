@@ -1,6 +1,7 @@
 package io.senftresearch.openrd.encoding;
 
 import io.senftresearch.openrd.encoding.commands.RDCommand;
+import io.senftresearch.openrd.encoding.commands.RDCommandSet;
 import io.senftresearch.openrd.encoding.commands.types.process.RDCommandArg;
 
 import java.io.ByteArrayOutputStream;

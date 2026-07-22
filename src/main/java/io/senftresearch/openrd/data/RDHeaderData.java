@@ -3,7 +3,7 @@ package io.senftresearch.openrd.data;
 import io.senftresearch.openrd.RDBoundingBox;
 import io.senftresearch.openrd.RDLayer;
 import io.senftresearch.openrd.RDPoint;
-import io.senftresearch.openrd.encoding.RDCommandSet;
+import io.senftresearch.openrd.encoding.commands.RDCommandSet;
 import io.senftresearch.openrd.encoding.RDEncoder;
 import io.senftresearch.openrd.encoding.commands.RDCommand;
 import io.senftresearch.openrd.encoding.commands.types.RDEnableBlockCuttingCommand;
@@ -36,13 +36,13 @@ public class RDHeaderData implements RDData {
             RDCommand refEnableBlockCuttingCommand = new RDEnableBlockCuttingCommand();
             RDCommand processStartCommand = new RDProcessCommand(ProcessType.START);
 
-            List<RDCommand> commands = new ArrayList<>();
-            commands.add(refPointModeCommand);
-            commands.add(refPointSetCommand);
-            commands.add(refEnableBlockCuttingCommand);
-            commands.add(processStartCommand);
-            RDCommandSet headerStartSet = new RDCommandSet();
-            headerStartSet.setCommands(commands);
+
+            RDCommandSet headerStartSet = new RDCommandSet.RDCommandSetBuilder()
+                    .withCommand(refPointModeCommand)
+                    .withCommand(refPointSetCommand)
+                    .withCommand(refEnableBlockCuttingCommand)
+                    .withCommand(processStartCommand)
+                    .build();
             stream.write(Objects.requireNonNull(RDEncoder.encode(headerStartSet)));
 
 
