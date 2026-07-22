@@ -11,7 +11,9 @@ public enum RDCommandHex {
     RD_START_PROCESS("d8 00"),
     RD_STOP_PROCESS("d8 01"),
     RD_PAUSE_PROCESS("d8 02"),
-    RD_RESTORE_PROCESS("d8 03");
+    RD_RESTORE_PROCESS("d8 03"),
+    RD_PEN_OFFSET("e7 54 00 00 00 00 00 00 e7 54 01 00 00 00 00 00"),
+    RD_LAYER_OFFSET("e7 55 00 00 00 00 00 00 e7 55 01 00 00 00 00 00");
 
     private final String hexCode;
     RDCommandHex(String hexCode){

@@ -6,6 +6,8 @@ import io.senftresearch.openrd.RDPoint;
 import io.senftresearch.openrd.encoding.commands.RDCommandSet;
 import io.senftresearch.openrd.encoding.RDEncoder;
 import io.senftresearch.openrd.encoding.commands.RDCommand;
+import io.senftresearch.openrd.encoding.commands.RDLayerOffsetCommand;
+import io.senftresearch.openrd.encoding.commands.RDPenOffsetCommand;
 import io.senftresearch.openrd.encoding.commands.types.RDEnableBlockCuttingCommand;
 import io.senftresearch.openrd.encoding.commands.types.RDPartInitCommand;
 import io.senftresearch.openrd.encoding.commands.types.RDRefPointModeCommand;
@@ -58,7 +60,13 @@ public class RDHeaderData implements RDData {
             setBoundingBoxData(stream);
             setLayerHeaders(layers, stream);
             stream.write(RDEncoder.encode(headerInitSet));
-            stream.write(RDEncoder.encode("-", "e7 54 00 00 00 00 00 00 e7 54 01 00 00 00"));
+
+            RDCommandSet offsetCommandSet = new RDCommandSet.RDCommandSetBuilder()
+                    .withCommand(new RDPenOffsetCommand())
+                    .withCommand(new RDLayerOffsetCommand())
+                    .build();
+            stream.write(RDEncoder.encode(offsetCommandSet));
+            //stream.write(RDEncoder.encode("-", "e7 54 00 00 00 00 00 00 e7 54 01 00 00 00"));
             //TODO needs separating to its own method
             int xmin = this.boundingBox.topLeft().x();
             int ymin = this.boundingBox.topLeft().y();
@@ -66,8 +74,6 @@ public class RDHeaderData implements RDData {
             int ymax = this.boundingBox.bottomRight().y();
             stream.write(RDEncoder.encode(
                     "-nn-nn-nn-nn-nn-nn-nn-nn-",
-                    "00 00 e7 55 00 00 00 00 00 00" +
-                            " e7 55 01 00 00 00 00 00 " +
                             "f1 03 00 00 00 00 00 00 00 00 00 00 f1 00 00 f1 01 00 f2 00 00 f2 01 00 f2 02 05 2a 39 1c 41 04 6a 15 08 20 f2 03",
                     xmin, ymin,
                     "f2 04",
