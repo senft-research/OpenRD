@@ -30,7 +30,6 @@ public class RDHeaderData implements RDData {
         layers.forEach(layer -> this.boundingBox = combineBoundingBoxes(this.boundingBox, layer));
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {
-            // Not sure what this does
             RDCommand refPointModeCommand = new RDRefPointModeCommand
                     .RDRefPointModeCommandBuilder()
                     .withPointMode(0)
@@ -66,7 +65,6 @@ public class RDHeaderData implements RDData {
                     .withCommand(new RDLayerOffsetCommand())
                     .build();
             stream.write(RDEncoder.encode(offsetCommandSet));
-            //stream.write(RDEncoder.encode("-", "e7 54 00 00 00 00 00 00 e7 54 01 00 00 00"));
             //TODO needs separating to its own method
             int xmin = this.boundingBox.topLeft().x();
             int ymin = this.boundingBox.topLeft().y();
