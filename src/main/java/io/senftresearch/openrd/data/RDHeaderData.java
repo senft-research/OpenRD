@@ -44,10 +44,7 @@ public class RDHeaderData implements RDData {
             RDCommandSet headerStartSet = new RDCommandSet();
             headerStartSet.setCommands(commands);
             stream.write(Objects.requireNonNull(RDEncoder.encode(headerStartSet)));
-            /*stream.write(RDEncoder.encodeHex((String) refPointModeCommand.getCommandArgs()[0]));
-            stream.write(RDEncoder.encodeHex((String) refPointSetCommand.getCommandArgs()[0]));
-            stream.write(RDEncoder.encodeHex("f1 02 00"));
-            stream.write(RDEncoder.encodeHex((String) processStartCommand.getCommandArgs()[0]));*/
+
 
             setBoundingBoxData(stream);
             setLayerHeaders(layers, stream);
