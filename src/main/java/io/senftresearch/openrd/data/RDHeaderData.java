@@ -23,12 +23,12 @@ import java.util.Objects;
 
 public class RDHeaderData implements RDData {
     private RDBoundingBox boundingBox;
-    private ByteArrayOutputStream headerData;
+    private final ByteArrayOutputStream headerData;
 
     public RDHeaderData(List<RDLayer> layers, RDBoundingBox globalBoundingBox) {
 
         layers.forEach(layer -> this.boundingBox = combineBoundingBoxes(this.boundingBox, layer));
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        this.headerData = new ByteArrayOutputStream();
         try {
             RDCommand refPointModeCommand = new RDRefPointModeCommand
                     .RDRefPointModeCommandBuilder()
@@ -46,7 +46,7 @@ public class RDHeaderData implements RDData {
                     .withCommand(processStartCommand)
                     .build();
 
-            stream.write(Objects.requireNonNull(RDEncoder.encode(headerStartSet)));
+            headerData.write(Objects.requireNonNull(RDEncoder.encode(headerStartSet)));
 
             RDCommand initCommand = new RDPartInitCommand.RDPartInitCommandBuilder()
                     .withMaxLayerArg(layers.size()-1)
@@ -56,21 +56,21 @@ public class RDHeaderData implements RDData {
                     .withCommand(initCommand)
                     .build();
 
-            setBoundingBoxData(stream);
-            setLayerHeaders(layers, stream);
-            stream.write(RDEncoder.encode(headerInitSet));
+            setBoundingBoxData(headerData);
+            setLayerHeaders(layers, headerData);
+            headerData.write(RDEncoder.encode(headerInitSet));
 
             RDCommandSet offsetCommandSet = new RDCommandSet.RDCommandSetBuilder()
                     .withCommand(new RDPenOffsetCommand())
                     .withCommand(new RDLayerOffsetCommand())
                     .build();
-            stream.write(RDEncoder.encode(offsetCommandSet));
+            headerData.write(RDEncoder.encode(offsetCommandSet));
             //TODO needs separating to its own method
             int xmin = this.boundingBox.topLeft().x();
             int ymin = this.boundingBox.topLeft().y();
             int xmax = this.boundingBox.bottomRight().x();
             int ymax = this.boundingBox.bottomRight().y();
-            stream.write(RDEncoder.encode(
+            headerData.write(RDEncoder.encode(
                     "-nn-nn-nn-nn-nn-nn-nn-nn-",
                             "f1 03 00 00 00 00 00 00 00 00 00 00 f1 00 00 f1 01 00 f2 00 00 f2 01 00 f2 02 05 2a 39 1c 41 04 6a 15 08 20 f2 03",
                     xmin, ymin,
@@ -89,7 +89,6 @@ public class RDHeaderData implements RDData {
                     "e7 24 00 e7 08 00 01 00 01",
                     xmax, ymax, ""
             ));
-            this.headerData = stream;
         } catch (IOException e) {
             throw new RuntimeException("Failed to assemble header binary streams", e);
         }
