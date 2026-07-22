@@ -1,6 +1,6 @@
 package io.senftresearch.openrd.encoding.commands.types;
 
-import io.senftresearch.openrd.encoding.EncodingType;
+import io.senftresearch.openrd.encoding.RDEncodingType;
 import io.senftresearch.openrd.encoding.commands.AbstractRDCommand;
 import io.senftresearch.openrd.encoding.commands.RDCommandHex;
 import io.senftresearch.openrd.encoding.commands.types.process.RDCommandArg;
@@ -12,8 +12,8 @@ public class RDPartInitCommand extends AbstractRDCommand {
     @Override
     public RDCommandArg[] getArgs() {
         return new RDCommandArg[]{
-                new RDCommandArg(commandHex.getHexCode(), EncodingType.HEX),
-                new RDCommandArg(maxLayerArg, EncodingType.NUMBER)};
+                new RDCommandArg(commandHex.getHexCode(), RDEncodingType.HEX),
+                new RDCommandArg(maxLayerArg, RDEncodingType.BYTE)};
     }
 
     public static class RDPartInitCommandBuilder extends AbstractRDCommandBuilder<RDPartInitCommandBuilder>{

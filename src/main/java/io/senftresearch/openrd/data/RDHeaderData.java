@@ -7,6 +7,7 @@ import io.senftresearch.openrd.encoding.commands.RDCommandSet;
 import io.senftresearch.openrd.encoding.RDEncoder;
 import io.senftresearch.openrd.encoding.commands.RDCommand;
 import io.senftresearch.openrd.encoding.commands.types.RDEnableBlockCuttingCommand;
+import io.senftresearch.openrd.encoding.commands.types.RDPartInitCommand;
 import io.senftresearch.openrd.encoding.commands.types.RDRefPointModeCommand;
 import io.senftresearch.openrd.encoding.commands.types.RDRefPointSetCommand;
 import io.senftresearch.openrd.encoding.commands.types.process.ProcessType;
@@ -43,13 +44,21 @@ public class RDHeaderData implements RDData {
                     .withCommand(refEnableBlockCuttingCommand)
                     .withCommand(processStartCommand)
                     .build();
+
             stream.write(Objects.requireNonNull(RDEncoder.encode(headerStartSet)));
 
+            RDCommand initCommand = new RDPartInitCommand.RDPartInitCommandBuilder()
+                    .withMaxLayerArg(layers.size()-1)
+                    .build();
+
+            RDCommandSet headerInitSet = new RDCommandSet.RDCommandSetBuilder()
+                    .withCommand(initCommand)
+                    .build();
 
             setBoundingBoxData(stream);
             setLayerHeaders(layers, stream);
-
-            stream.write(RDEncoder.encode("-b-", "ca 22", layers.size()-1, "e7 54 00 00 00 00 00 00 e7 54 01 00 00 00"));
+            stream.write(RDEncoder.encode(headerInitSet));
+            stream.write(RDEncoder.encode("-", "e7 54 00 00 00 00 00 00 e7 54 01 00 00 00"));
             //TODO needs separating to its own method
             int xmin = this.boundingBox.topLeft().x();
             int ymin = this.boundingBox.topLeft().y();
