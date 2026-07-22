@@ -1,8 +1,7 @@
 package io.senftresearch.openrd.encoding.commands.types;
 
-import io.senftresearch.openrd.encoding.EncodingType;
+import io.senftresearch.openrd.encoding.RDEncodingType;
 import io.senftresearch.openrd.encoding.commands.AbstractRDCommand;
-import io.senftresearch.openrd.encoding.commands.RDCommand;
 import io.senftresearch.openrd.encoding.commands.RDCommandHex;
 import io.senftresearch.openrd.encoding.commands.types.process.RDCommandArg;
 
@@ -18,7 +17,7 @@ public class RDRefPointModeCommand extends AbstractRDCommand {
             default -> RDCommandHex.RD_REF_POINT_MODE_ZERO;
         };
         return new RDCommandArg[]{
-                new RDCommandArg(commandHex.getHexCode(), EncodingType.HEX)
+                new RDCommandArg(commandHex.getHexCode(), RDEncodingType.HEX)
         };
     }
 
