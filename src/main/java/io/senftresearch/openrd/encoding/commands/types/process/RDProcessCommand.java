@@ -1,11 +1,13 @@
 package io.senftresearch.openrd.encoding.commands.types.process;
 
+import io.senftresearch.openrd.encoding.EncodingType;
 import io.senftresearch.openrd.encoding.commands.AbstractRDCommand;
 import io.senftresearch.openrd.encoding.commands.RDCommandHex;
 
 public class RDProcessCommand extends AbstractRDCommand {
 
     private RDCommandHex commandHex;
+    private final EncodingType encodingTypeArray = EncodingType.HEX;
 
     public RDProcessCommand(ProcessType processType){
         switch (processType){
@@ -16,8 +18,9 @@ public class RDProcessCommand extends AbstractRDCommand {
         }
     }
 
+
     @Override
-    public Object[] getCommandArgs() {
-        return new Object[]{commandHex.getHexCode()};
+    public RDCommandArg[] getArgs() {
+        return new RDCommandArg[]{new RDCommandArg(this.commandHex.getHexCode(), this.encodingTypeArray)};
     }
 }

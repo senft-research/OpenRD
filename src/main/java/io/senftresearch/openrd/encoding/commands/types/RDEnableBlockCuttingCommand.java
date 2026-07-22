@@ -1,11 +1,14 @@
 package io.senftresearch.openrd.encoding.commands.types;
 
+import io.senftresearch.openrd.encoding.EncodingType;
 import io.senftresearch.openrd.encoding.commands.AbstractRDCommand;
+import io.senftresearch.openrd.encoding.commands.types.process.RDCommandArg;
 
 public class RDEnableBlockCuttingCommand extends AbstractRDCommand {
 
+
     @Override
-    public Object[] getCommandArgs() {
-        return new Object[]{"f1 02 00"};
+    public RDCommandArg[] getArgs() {
+        return new RDCommandArg[]{new RDCommandArg("f1 02 00", EncodingType.HEX)};
     }
 }

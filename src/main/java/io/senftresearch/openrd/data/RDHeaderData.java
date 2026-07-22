@@ -3,8 +3,10 @@ package io.senftresearch.openrd.data;
 import io.senftresearch.openrd.RDBoundingBox;
 import io.senftresearch.openrd.RDLayer;
 import io.senftresearch.openrd.RDPoint;
+import io.senftresearch.openrd.encoding.RDCommandSet;
 import io.senftresearch.openrd.encoding.RDEncoder;
 import io.senftresearch.openrd.encoding.commands.RDCommand;
+import io.senftresearch.openrd.encoding.commands.types.RDEnableBlockCuttingCommand;
 import io.senftresearch.openrd.encoding.commands.types.RDRefPointModeCommand;
 import io.senftresearch.openrd.encoding.commands.types.RDRefPointSetCommand;
 import io.senftresearch.openrd.encoding.commands.types.process.ProcessType;
@@ -14,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RDHeaderData implements RDData {
     private RDBoundingBox boundingBox;
@@ -30,12 +33,21 @@ public class RDHeaderData implements RDData {
                     .withPointMode(0)
                     .build();
             RDCommand refPointSetCommand = new RDRefPointSetCommand();
+            RDCommand refEnableBlockCuttingCommand = new RDEnableBlockCuttingCommand();
             RDCommand processStartCommand = new RDProcessCommand(ProcessType.START);
 
-            stream.write(RDEncoder.encodeHex((String) refPointModeCommand.getCommandArgs()[0]));
+            List<RDCommand> commands = new ArrayList<>();
+            commands.add(refPointModeCommand);
+            commands.add(refPointSetCommand);
+            commands.add(refEnableBlockCuttingCommand);
+            commands.add(processStartCommand);
+            RDCommandSet headerStartSet = new RDCommandSet();
+            headerStartSet.setCommands(commands);
+            stream.write(Objects.requireNonNull(RDEncoder.encode(headerStartSet)));
+            /*stream.write(RDEncoder.encodeHex((String) refPointModeCommand.getCommandArgs()[0]));
             stream.write(RDEncoder.encodeHex((String) refPointSetCommand.getCommandArgs()[0]));
             stream.write(RDEncoder.encodeHex("f1 02 00"));
-            stream.write(RDEncoder.encodeHex((String) processStartCommand.getCommandArgs()[0]));
+            stream.write(RDEncoder.encodeHex((String) processStartCommand.getCommandArgs()[0]));*/
 
             setBoundingBoxData(stream);
             setLayerHeaders(layers, stream);

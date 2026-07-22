@@ -3,8 +3,7 @@ package io.senftresearch.openrd.encoding.commands;
 
 public abstract class AbstractRDCommand implements RDCommand {
 
-    @Override
-    public abstract Object[] getCommandArgs();
+
 
     public static abstract class AbstractRDCommandBuilder<T extends AbstractRDCommandBuilder<T>>{
         protected Object[] args;

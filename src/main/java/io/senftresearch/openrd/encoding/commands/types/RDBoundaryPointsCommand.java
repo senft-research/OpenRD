@@ -1,22 +1,34 @@
 package io.senftresearch.openrd.encoding.commands.types;
 
 import io.senftresearch.openrd.RDPoint;
+import io.senftresearch.openrd.encoding.EncodingType;
 import io.senftresearch.openrd.encoding.commands.AbstractRDCommand;
+import io.senftresearch.openrd.encoding.commands.RDCommand;
 import io.senftresearch.openrd.encoding.commands.RDCommandHex;
+import io.senftresearch.openrd.encoding.commands.types.process.RDCommandArg;
 
 public class RDBoundaryPointsCommand extends AbstractRDCommand {
     private RDPoint minPoint;
     private RDPoint maxPoint;
 
+
     @Override
-    public Object[] getCommandArgs() {
-        return new Object[]{RDCommandHex.RD_MIN_ARRAY_POINT.getHexCode(), minPoint.x(), minPoint.y(), RDCommandHex.RD_MAX_ARRAY_POINT.getHexCode(), maxPoint.x(), maxPoint.y()};
+    public RDCommandArg[] getArgs() {
+        return new RDCommandArg[]{
+
+                new RDCommandArg(RDCommandHex.RD_MIN_ARRAY_POINT.getHexCode(), EncodingType.HEX),
+                new RDCommandArg(minPoint.x(), EncodingType.NUMBER),
+                new RDCommandArg(minPoint.y(), EncodingType.NUMBER),
+                new RDCommandArg(RDCommandHex.RD_MAX_ARRAY_POINT.getHexCode(), EncodingType.HEX),
+                new RDCommandArg(maxPoint.x(), EncodingType.NUMBER),
+                new RDCommandArg(maxPoint.y(), EncodingType.NUMBER)
+        };
     }
 
-    public static class RDBoundaryPointsCommandBuilder extends AbstractRDCommandBuilder<RDBoundaryPointsCommandBuilder>{
+
+    public static class RDBoundaryPointsCommandBuilder extends AbstractRDCommandBuilder<RDBoundaryPointsCommandBuilder> {
         private RDPoint minPoint;
         private RDPoint maxPoint;
-
 
 
         @Override
@@ -32,12 +44,12 @@ public class RDBoundaryPointsCommand extends AbstractRDCommand {
             return (minPoint != null) && (maxPoint != null);
         }
 
-        public RDBoundaryPointsCommandBuilder withMinPoint(int minX, int minY){
+        public RDBoundaryPointsCommandBuilder withMinPoint(int minX, int minY) {
             this.minPoint = new RDPoint(minX, minY);
             return this;
         }
 
-        public RDBoundaryPointsCommandBuilder withMaxPoint(int maxX, int maxY){
+        public RDBoundaryPointsCommandBuilder withMaxPoint(int maxX, int maxY) {
             this.maxPoint = new RDPoint(maxX, maxY);
             return this;
         }
