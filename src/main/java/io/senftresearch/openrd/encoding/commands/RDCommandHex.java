@@ -6,6 +6,8 @@ public enum RDCommandHex {
     RD_MAX_ELEMENT_ARRAY_POINT("f2 04"),
     RD_MIN_ARRAY_POINT("e7 13"),
     RD_MAX_ARRAY_POINT("e7 17"),
+    RD_ARRAY_MIRROR("e7 24 00"),
+    RD_ARRAY_REPEAT("e7 08 00 01 00 01"),
     RD_ARRAY_ADD("e7 23"),
     RD_REF_POINT_MODE_ZERO("d8 12"),
     RD_REF_POINT_MODE_ONE("d8 11"),
