@@ -116,11 +116,18 @@ public class RDHeaderData implements RDData {
             RDCommandSet speedSet = new RDCommandSet.RDCommandSetBuilder()
                     .withCommand(new RDLayerSpeedCommand(layerNumber, speed))
                     .build();
+
             stream.write(RDEncoder.encode(speedSet));
-            stream.write(RDEncoder.encode("-bp-bp", "c6 31", layerNumber, powerOne.x(), "c6 32", layerNumber, powerOne.y()));
-            stream.write(RDEncoder.encode("-bp-bp", "c6 41", layerNumber, powerTwo.x(), "c6 42", layerNumber, powerTwo.y()));
-            stream.write(RDEncoder.encode("-bp-bp", "c6 35", layerNumber, powerThree.x(), "c6 36", layerNumber, powerThree.y()));
-            stream.write(RDEncoder.encode("-bp-bp", "c6 37", layerNumber, powerFour.x(), "c6 38", layerNumber, powerFour.y()));
+
+            RDCommandSet powerSet = new RDCommandSet.RDCommandSetBuilder()
+                    .withCommand(new RDPowerCommand.RDPowerCommandBuilder()
+                            .withPower(powerOne, 1)
+                            .withPower(powerTwo, 2)
+                            .withPower(powerThree, 3)
+                            .withPower(powerFour, 4)
+                            .withLayerNumber(layerNumber)
+                            .build()).build();
+            stream.write(RDEncoder.encode(powerSet));
 
             setLayerBoundingBoxes(layer, layerNumber, stream);
             layerNumber++;
