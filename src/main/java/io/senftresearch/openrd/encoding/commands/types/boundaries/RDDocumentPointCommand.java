@@ -7,7 +7,7 @@ import io.senftresearch.openrd.encoding.commands.RDCommandHex;
 import io.senftresearch.openrd.encoding.commands.types.process.RDCommandArg;
 
 public class RDDocumentPointCommand extends AbstractRDCommand {
-    private RDBoundingBox boundingBox;
+    private final RDBoundingBox boundingBox;
 
     public RDDocumentPointCommand(RDBoundingBox boundingBox){
         this.boundingBox = boundingBox;

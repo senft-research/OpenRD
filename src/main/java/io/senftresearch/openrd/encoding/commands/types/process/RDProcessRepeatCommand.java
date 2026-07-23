@@ -5,8 +5,8 @@ import io.senftresearch.openrd.encoding.commands.AbstractRDCommand;
 import io.senftresearch.openrd.encoding.commands.RDCommandHex;
 
 public class RDProcessRepeatCommand extends AbstractRDCommand {
-    private double repeatFieldOne;
-    private double repeatFieldTwo;
+    private final double repeatFieldOne;
+    private final double repeatFieldTwo;
 
     public RDProcessRepeatCommand(double repeatFieldOne, double repeatFieldTwo){
         this.repeatFieldOne = repeatFieldOne;
