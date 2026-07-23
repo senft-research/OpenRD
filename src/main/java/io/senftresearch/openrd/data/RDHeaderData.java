@@ -33,20 +33,15 @@ public class RDHeaderData implements RDData {
         layers.forEach(layer -> this.boundingBox = combineBoundingBoxes(this.boundingBox, layer));
         this.headerData = new ByteArrayOutputStream();
         try {
-            RDCommand refPointModeCommand = new RDRefPointModeCommand
-                    .RDRefPointModeCommandBuilder()
-                    .withPointMode(0)
-                    .build();
-            RDCommand refPointSetCommand = new RDRefPointSetCommand();
-            RDCommand refEnableBlockCuttingCommand = new RDEnableBlockCuttingCommand();
-            RDCommand processStartCommand = new RDProcessCommand(ProcessType.START);
-
 
             RDCommandSet headerStartSet = new RDCommandSet.RDCommandSetBuilder()
-                    .withCommand(refPointModeCommand)
-                    .withCommand(refPointSetCommand)
-                    .withCommand(refEnableBlockCuttingCommand)
-                    .withCommand(processStartCommand)
+                    .withCommand(new RDRefPointModeCommand
+                            .RDRefPointModeCommandBuilder()
+                            .withPointMode(0)
+                            .build())
+                    .withCommand(new RDRefPointSetCommand())
+                    .withCommand(new RDEnableBlockCuttingCommand())
+                    .withCommand(new RDProcessCommand(ProcessType.START))
                     .build();
 
             headerData.write(Objects.requireNonNull(RDEncoder.encode(headerStartSet)));
