@@ -19,7 +19,7 @@ public class RDDocumentPointCommand extends AbstractRDCommand {
                 new RDCommandArg(RDCommandHex.RD_DOCUMENT_MIN_POINT.getHexCode(), RDEncodingType.HEX),
                 new RDCommandArg(boundingBox.topLeft().x(), RDEncodingType.NUMBER),
                 new RDCommandArg(boundingBox.topLeft().y(), RDEncodingType.NUMBER),
-                new RDCommandArg(RDCommandHex.RD_DOCUMENT_MAX_POINT, RDEncodingType.HEX),
+                new RDCommandArg(RDCommandHex.RD_DOCUMENT_MAX_POINT.getHexCode(), RDEncodingType.HEX),
                 new RDCommandArg(boundingBox.bottomRight().x(), RDEncodingType.NUMBER),
                 new RDCommandArg(boundingBox.bottomRight().y(), RDEncodingType.NUMBER)
         };
