@@ -8,10 +8,9 @@ import io.senftresearch.openrd.encoding.RDEncoder;
 import io.senftresearch.openrd.encoding.commands.RDCommand;
 import io.senftresearch.openrd.encoding.commands.RDLayerOffsetCommand;
 import io.senftresearch.openrd.encoding.commands.RDPenOffsetCommand;
-import io.senftresearch.openrd.encoding.commands.types.RDEnableBlockCuttingCommand;
-import io.senftresearch.openrd.encoding.commands.types.RDPartInitCommand;
-import io.senftresearch.openrd.encoding.commands.types.RDRefPointModeCommand;
-import io.senftresearch.openrd.encoding.commands.types.RDRefPointSetCommand;
+import io.senftresearch.openrd.encoding.commands.types.*;
+import io.senftresearch.openrd.encoding.commands.types.array.*;
+import io.senftresearch.openrd.encoding.commands.types.element.*;
 import io.senftresearch.openrd.encoding.commands.types.process.ProcessType;
 import io.senftresearch.openrd.encoding.commands.types.process.RDProcessCommand;
 
@@ -65,31 +64,25 @@ public class RDHeaderData implements RDData {
                     .withCommand(new RDLayerOffsetCommand())
                     .build();
             headerData.write(RDEncoder.encode(offsetCommandSet));
-            //TODO needs separating to its own method
-            int xmin = this.boundingBox.topLeft().x();
-            int ymin = this.boundingBox.topLeft().y();
-            int xmax = this.boundingBox.bottomRight().x();
-            int ymax = this.boundingBox.bottomRight().y();
-            //TODO several of the commands didn't account for the coords that need to be added!
-            headerData.write(RDEncoder.encode(
-                    "-nn-nn-nn-nn-nn-nn-nn-nn-",
-                            "f1 03 00 00 00 00 00 00 00 00 00 00 f1 00 00 f1 01 00 f2 00 00 f2 01 00 f2 02 05 2a 39 1c 41 04 6a 15 08 20 f2 03",
-                    xmin, ymin,
-                    "f2 04",
-                    xmax, ymax,
-                    "f2 06",
-                    xmin, ymin,
-                    "f2 07 00 f2 05 00 01 00 01",
-                    xmax, ymax,
-                    "ea 00 e7 60 00 e7 13",
-                    xmin, ymin,
-                    "e7 17",
-                    xmax, ymax,
-                    "e7 23",
-                    xmin, ymin,
-                    "e7 24 00 e7 08 00 01 00 01",
-                    xmax, ymax, ""
-            ));
+
+            RDCommandSet boundariesCommandSet = new RDCommandSet.RDCommandSetBuilder()
+                    .withCommand(new RDDisplayOffsetCommand())
+                    .withCommand(new RDElementMaxIndexCommand())
+                    .withCommand(new RDElementNameMaxIndexCommand())
+                    .withCommand(new RDElementIndexAndNameCommand())
+                    .withCommand(new RDElementArrayBoundariesCommand(boundingBox))
+                    .withCommand(new RDElementArrayAddCommand(boundingBox.topLeft()))
+                    .withCommand(new RDElementArrayCommand(boundingBox.bottomRight()))
+                    .withCommand(new RDArrayStartCommand())
+                    .withCommand(new RDSetCurrentElementIndexCommand())
+                    .withCommand(new RDArrayBoundariesCommand(boundingBox))
+                    .withCommand(new RDArrayAddCommand(boundingBox.topLeft()))
+                    .withCommand(new RDArrayMirrorCommand())
+                    .withCommand(new RDArrayRepeatCommand(boundingBox.bottomRight()))
+
+                    .build();
+            headerData.write(RDEncoder.encode(boundariesCommandSet));
+
         } catch (IOException e) {
             throw new RuntimeException("Failed to assemble header binary streams", e);
         }

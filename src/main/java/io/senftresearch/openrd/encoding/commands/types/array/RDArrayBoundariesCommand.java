@@ -8,6 +8,10 @@ import io.senftresearch.openrd.encoding.commands.types.process.RDCommandArg;
 
 public class RDArrayBoundariesCommand extends AbstractRDCommand {
     private RDBoundingBox boundingBox;
+
+    public RDArrayBoundariesCommand(RDBoundingBox boundingBox){
+        this.boundingBox = boundingBox;
+    }
     @Override
     public RDCommandArg[] getArgs() {
         return new RDCommandArg[]{
