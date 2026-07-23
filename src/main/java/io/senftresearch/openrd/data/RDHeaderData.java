@@ -10,9 +10,13 @@ import io.senftresearch.openrd.encoding.commands.RDLayerOffsetCommand;
 import io.senftresearch.openrd.encoding.commands.RDPenOffsetCommand;
 import io.senftresearch.openrd.encoding.commands.types.*;
 import io.senftresearch.openrd.encoding.commands.types.array.*;
+import io.senftresearch.openrd.encoding.commands.types.boundaries.RDDocumentPointCommand;
+import io.senftresearch.openrd.encoding.commands.types.boundaries.RDFeedRepeatCommand;
+import io.senftresearch.openrd.encoding.commands.types.boundaries.RDProcessBoundingBoxCommand;
 import io.senftresearch.openrd.encoding.commands.types.element.*;
 import io.senftresearch.openrd.encoding.commands.types.process.ProcessType;
 import io.senftresearch.openrd.encoding.commands.types.process.RDProcessCommand;
+import io.senftresearch.openrd.encoding.commands.types.process.RDProcessRepeatCommand;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -89,14 +93,14 @@ public class RDHeaderData implements RDData {
     }
 
     private void setBoundingBoxData(ByteArrayOutputStream stream) throws IOException {
-
-        //stream.write(RDEncoder.encode("-nn", "e7 06", (double) 0, (double) 0));
-        //stream.write(RDEncoder.encode("-nn", "e7 03", (double) xmin, (double) ymin));
-        //stream.write(RDEncoder.encode("-nn", "e7 07", (double) xmax, (double) ymax));
-        //stream.write(RDEncoder.encode("-nn", "e7 50", (double) xmin, (double) ymin));
-        //stream.write(RDEncoder.encode("-nn", "e7 51", (double) xmax, (double) ymax));
-        //stream.write(RDEncoder.encode("-nn", "e7 04 00 01 00 01", (double) 0, (double) 0));
-        //stream.write(RDEncoder.encode("-",   "e7 05 00"));
+        RDCommandSet boundingBoxSet = new RDCommandSet.RDCommandSetBuilder()
+                .withCommand(new RDFeedRepeatCommand(0,0))
+                .withCommand(new RDProcessBoundingBoxCommand(this.boundingBox))
+                .withCommand(new RDDocumentPointCommand(boundingBox))
+                .withCommand(new RDProcessRepeatCommand(0, 0))
+                .withCommand(new RDArrayDirectionCommand())
+                .build();
+        stream.write(RDEncoder.encode(boundingBoxSet));
     }
 
     private void setLayerHeaders(List<RDLayer> layers, ByteArrayOutputStream stream) throws IOException {
