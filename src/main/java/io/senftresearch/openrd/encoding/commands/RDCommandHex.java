@@ -2,8 +2,10 @@ package io.senftresearch.openrd.encoding.commands;
 
 public enum RDCommandHex {
     RD_INIT_COMMAND("ca 22"),
-    RD_MIN_ARRAY_POINT("f2 03"),
-    RD_MAX_ARRAY_POINT("f2 04"),
+    RD_MIN_ELEMENT_ARRAY_POINT("f2 03"),
+    RD_MAX_ELEMENT_ARRAY_POINT("f2 04"),
+    RD_MIN_ARRAY_POINT("e7 13"),
+    RD_MAX_ARRAY_POINT("e7 17"),
     RD_REF_POINT_MODE_ZERO("d8 12"),
     RD_REF_POINT_MODE_ONE("d8 11"),
     RD_REF_POINT_MODE_TWO("d8 10"),
@@ -19,7 +21,10 @@ public enum RDCommandHex {
     RD_ELEMENT_MAX_INDEX("f1 00 00"),
     RD_ELEMENT_INDEX_AND_NAME("f2 00 00 f2 01 00 f2 02 05 2a 39 1c 41 04 6a 15 08 20"),
     RD_ELEMENT_ARRAY_ADD("f2 06"),
-    RD_ELEMENT_ARRAY("f2 07 00 f2 05 00 01 00 01");
+    RD_ELEMENT_ARRAY("f2 07 00 f2 05 00 01 00 01"),
+    RD_ARRAY_START("ea 00"),
+    RD_ARRAY_END("eb"),
+    RD_SET_CURRENT_ARRAY_INDEX("");
 
     private final String hexCode;
     RDCommandHex(String hexCode){
