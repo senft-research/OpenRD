@@ -89,10 +89,6 @@ public class RDHeaderData implements RDData {
     }
 
     private void setBoundingBoxData(ByteArrayOutputStream stream) throws IOException {
-        int xmin = this.boundingBox.topLeft().x();
-        int ymin = this.boundingBox.topLeft().y();
-        int xmax = this.boundingBox.bottomRight().x();
-        int ymax = this.boundingBox.bottomRight().y();
 
         //stream.write(RDEncoder.encode("-nn", "e7 06", (double) 0, (double) 0));
         //stream.write(RDEncoder.encode("-nn", "e7 03", (double) xmin, (double) ymin));
