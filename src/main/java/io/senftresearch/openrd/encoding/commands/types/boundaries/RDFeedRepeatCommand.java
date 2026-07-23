@@ -1,4 +1,4 @@
-package io.senftresearch.openrd.encoding.commands.types;
+package io.senftresearch.openrd.encoding.commands.types.boundaries;
 
 import io.senftresearch.openrd.encoding.RDEncodingType;
 import io.senftresearch.openrd.encoding.commands.AbstractRDCommand;
