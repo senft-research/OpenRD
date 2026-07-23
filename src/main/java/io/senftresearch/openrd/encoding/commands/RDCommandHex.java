@@ -6,6 +6,7 @@ public enum RDCommandHex {
     RD_MAX_ELEMENT_ARRAY_POINT("f2 04"),
     RD_MIN_ARRAY_POINT("e7 13"),
     RD_MAX_ARRAY_POINT("e7 17"),
+    RD_ARRAY_ADD("e7 23"),
     RD_REF_POINT_MODE_ZERO("d8 12"),
     RD_REF_POINT_MODE_ONE("d8 11"),
     RD_REF_POINT_MODE_TWO("d8 10"),
@@ -24,7 +25,7 @@ public enum RDCommandHex {
     RD_ELEMENT_ARRAY("f2 07 00 f2 05 00 01 00 01"),
     RD_ARRAY_START("ea 00"),
     RD_ARRAY_END("eb"),
-    RD_SET_CURRENT_ARRAY_INDEX("");
+    RD_SET_CURRENT_ARRAY_INDEX("e7 60 00");
 
     private final String hexCode;
     RDCommandHex(String hexCode){
