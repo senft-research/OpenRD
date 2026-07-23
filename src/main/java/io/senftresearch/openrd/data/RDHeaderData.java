@@ -70,6 +70,7 @@ public class RDHeaderData implements RDData {
             int ymin = this.boundingBox.topLeft().y();
             int xmax = this.boundingBox.bottomRight().x();
             int ymax = this.boundingBox.bottomRight().y();
+            //TODO several of the commands didn't account for the coords that need to be added!
             headerData.write(RDEncoder.encode(
                     "-nn-nn-nn-nn-nn-nn-nn-nn-",
                             "f1 03 00 00 00 00 00 00 00 00 00 00 f1 00 00 f1 01 00 f2 00 00 f2 01 00 f2 02 05 2a 39 1c 41 04 6a 15 08 20 f2 03",
