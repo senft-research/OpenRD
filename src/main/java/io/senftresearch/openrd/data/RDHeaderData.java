@@ -95,8 +95,8 @@ public class RDHeaderData implements RDData {
         //stream.write(RDEncoder.encode("-nn", "e7 07", (double) xmax, (double) ymax));
         //stream.write(RDEncoder.encode("-nn", "e7 50", (double) xmin, (double) ymin));
         //stream.write(RDEncoder.encode("-nn", "e7 51", (double) xmax, (double) ymax));
-        stream.write(RDEncoder.encode("-nn", "e7 04 00 01 00 01", (double) 0, (double) 0));
-        stream.write(RDEncoder.encode("-",   "e7 05 00"));
+        //stream.write(RDEncoder.encode("-nn", "e7 04 00 01 00 01", (double) 0, (double) 0));
+        //stream.write(RDEncoder.encode("-",   "e7 05 00"));
     }
 
     private void setLayerHeaders(List<RDLayer> layers, ByteArrayOutputStream stream) throws IOException {

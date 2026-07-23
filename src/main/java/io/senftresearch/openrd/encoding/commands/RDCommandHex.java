@@ -7,7 +7,9 @@ public enum RDCommandHex {
     RD_FEED_REPEAT("e7 06"),
     RD_PROCESS_TOP_LEFT("e7 03"),
     RD_PROCESS_REPEAT("e7 04 00 01 00 01"),
-    RD_ARRAY_DIRECTION("e7 05 00"),
+    RD_ARRAY_DIRECTION("e7 05 0" +
+            "" +
+            "0"),
     RD_PROCESS_BOTTOM_RIGHT("e7 07"),
     RD_DOCUMENT_MIN_POINT("e7 50"),
     RD_DOCUMENT_MAX_POINT("e7 51"),
