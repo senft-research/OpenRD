@@ -6,8 +6,8 @@ import io.senftresearch.openrd.encoding.commands.RDCommandHex;
 import io.senftresearch.openrd.encoding.commands.types.process.RDCommandArg;
 
 public class RDLayerSpeedCommand extends AbstractRDCommand {
-    private int layerNumber;
-    private int speed;
+    private final int layerNumber;
+    private final int speed;
 
     public RDLayerSpeedCommand(int layerNumber, int speed){
         this.layerNumber = layerNumber;
