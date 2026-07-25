@@ -147,6 +147,7 @@ public class RDHeaderData implements RDData {
                 "e7 61", layerNumber, boundBoxTopLeftX, boundBoxTopLeftY,
                 "e7 62", layerNumber, boundBoxBottomRightX, boundBoxBottomRightY,""));
     }
+
     private RDBoundingBox combineBoundingBoxes(RDBoundingBox boundingBox, RDLayer layer) {
         if(boundingBox == null) return layer.boundingBox();
         RDBoundingBox layerBox = layer.boundingBox();

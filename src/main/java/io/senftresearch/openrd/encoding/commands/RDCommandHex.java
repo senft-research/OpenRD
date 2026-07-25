@@ -2,6 +2,12 @@ package io.senftresearch.openrd.encoding.commands;
 
 public enum RDCommandHex {
     RD_INIT_COMMAND("ca 22"),
+    RD_LAYER_COLOUR_SET("ca 06"),
+    RD_PART_WORK_MODE("ca 41"),
+    RD_PART_MIN_POINT("e7 52"),
+    RD_PART_MAX_POINT("e7 53"),
+    RD_PART_MIN_POINT_EX("e7 61"),
+    RD_PART_MAX_POINT_EX("e7 62"),
     RD_LAYER_SPEED("c9 04"),
     RD_POWER_ONE_MIN("c6 31"),
     RD_POWER_ONE_MAX("c6 32"),
