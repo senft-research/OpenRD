@@ -8,8 +8,8 @@ import io.senftresearch.openrd.encoding.commands.types.process.RDCommandArg;
 
 public class RDLayerColourSetCommand extends AbstractRDCommand {
 
-    private RDColour colour;
-    private int layerNumber;
+    private final RDColour colour;
+    private final int layerNumber;
 
     public RDLayerColourSetCommand(RDColour colour, int layerNumber){
         this.colour = colour;
