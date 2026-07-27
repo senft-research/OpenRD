@@ -1,6 +1,7 @@
 package io.senftresearch.openrd.encoding.commands;
 
 public enum RDCommandHex {
+    RD_END_FILE("d7"),
     RD_RELATIVE_MOVE_HORIZONTAL("8a"),
     RD_RELATIVE_MOVE_VERTICAL("8b"),
     RD_RELATIVE_MOVE("89"),
@@ -76,6 +77,8 @@ public enum RDCommandHex {
     RD_ELEMENT_ARRAY("f2 07 00 f2 05 00 01 00 01"),
     RD_ARRAY_START("ea 00"),
     RD_ARRAY_END("eb"),
+    RD_BLOCK_END("e7 00"),
+    RD_WRITE_OR_RESPOND_PARAM("da 01"),
     RD_SET_CURRENT_ARRAY_INDEX("e7 60 00");
 
     private final String hexCode;
