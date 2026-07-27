@@ -78,18 +78,6 @@ public class RDBodyData implements RDData{
                 .withCommand(new RDEnableExIOStartCommand())
                 .build();
         bodyDataStream.write(RDEncoder.encode(proLogSet));
-
-        /*bodyDataStream.write(RDEncoder.encode("-n-p-p-p-p-p-p-p-p-",
-                "c9 02", speed,
-                "c6 15 00 00 00 00 00 c6 16 00 00 00 00 00 c6 01", powerOne.x(),
-                "c6 02", powerOne.y(),
-                "c6 21", powerTwo.x(),
-                "c6 22", powerTwo.y(),
-                "c6 05", powerThree.x(),
-                "c6 06", powerThree.y(),
-                "c6 07", powerFour.x(),
-                "c6 08", powerFour.y(),
-                "ca 03 01 ca 10 00"));*/
     }
 
     private RDPoint travelLogic(ByteArrayOutputStream bodyDataStream, RDLayer layer, RDPoint lastPoint) throws IOException{
