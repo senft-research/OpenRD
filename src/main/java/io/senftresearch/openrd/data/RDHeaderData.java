@@ -107,7 +107,6 @@ public class RDHeaderData implements RDData {
 
     private void setLayerSpeedAndPowerLevels(RDLayer layer, ByteArrayOutputStream stream, int layerNumber) throws IOException {
         List<RDPoint> powerArray = new ArrayList<>();
-        //TODO this can be moved out to a method to set power, set RGB etc.
         while (powerArray.size() < 8) {
             powerArray.add(layer.power());
         }
