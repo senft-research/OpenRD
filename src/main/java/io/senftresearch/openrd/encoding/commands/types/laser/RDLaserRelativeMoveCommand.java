@@ -54,8 +54,8 @@ public class RDLaserRelativeMoveCommand extends AbstractRDCommand {
         protected AbstractRDCommand create() {
             RDLaserRelativeMoveCommand command = new RDLaserRelativeMoveCommand();
             command.translationType = translationType;
-            command.xCoord = xCoord;
-            command.yCoord = yCoord;
+            if(xCoord != null) command.xCoord = xCoord;
+            if(yCoord != null) command.yCoord = yCoord;
             return command;
         }
 

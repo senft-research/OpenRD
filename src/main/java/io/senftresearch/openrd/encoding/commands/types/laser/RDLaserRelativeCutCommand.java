@@ -55,8 +55,8 @@ public class RDLaserRelativeCutCommand extends AbstractRDCommand {
         protected AbstractRDCommand create() {
             RDLaserRelativeCutCommand command = new RDLaserRelativeCutCommand();
             command.translationType = translationType;
-            command.xCoord = xCoord;
-            command.yCoord = yCoord;
+            if(xCoord != null) command.xCoord = xCoord;
+            if(yCoord != null) command.yCoord = yCoord;
             return command;
         }
 

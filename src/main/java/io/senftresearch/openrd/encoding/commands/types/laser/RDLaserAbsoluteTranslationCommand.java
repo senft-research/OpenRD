@@ -22,8 +22,8 @@ public class RDLaserAbsoluteTranslationCommand extends AbstractRDCommand {
     public RDCommandArg[] getArgs() {
         return new RDCommandArg[]{
                 new RDCommandArg(commandHex.getHexCode(), RDEncodingType.HEX),
-                new RDCommandArg(xCoord, RDEncodingType.REL_COORD),
-                new RDCommandArg(yCoord, RDEncodingType.REL_COORD)
+                new RDCommandArg(xCoord, RDEncodingType.NUMBER),
+                new RDCommandArg(yCoord, RDEncodingType.NUMBER)
         };
     }
 }

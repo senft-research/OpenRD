@@ -13,6 +13,10 @@ import java.util.regex.Pattern;
 
 public class RDEncoder {
 
+    public static byte[] encode (RDCommand command) throws IOException {
+        return encode(new RDCommandSet.RDCommandSetBuilder().withCommand(command).build());
+    }
+
     public static byte[] encode(RDCommandSet commandSet) throws IOException {
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
