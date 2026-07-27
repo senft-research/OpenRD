@@ -5,7 +5,6 @@ import io.senftresearch.openrd.RDLayer;
 import io.senftresearch.openrd.RDPoint;
 import io.senftresearch.openrd.encoding.commands.RDCommandSet;
 import io.senftresearch.openrd.encoding.RDEncoder;
-import io.senftresearch.openrd.encoding.commands.RDCommand;
 import io.senftresearch.openrd.encoding.commands.RDLayerOffsetCommand;
 import io.senftresearch.openrd.encoding.commands.RDPenOffsetCommand;
 import io.senftresearch.openrd.encoding.commands.types.*;
@@ -100,36 +99,39 @@ public class RDHeaderData implements RDData {
     private void setLayerHeaders(List<RDLayer> layers, ByteArrayOutputStream stream) throws IOException {
         int layerNumber = 0;
         for (RDLayer layer : layers) {
-            List<RDPoint> powerArray = new ArrayList<>();
-            //TODO this can be moved out to a method to set power, set RGB etc.
-            while (powerArray.size() < 8) {
-                powerArray.add(layer.power());
-            }
-            int speed = layer.speed();
-
-            RDPoint powerOne = powerArray.get(0);
-            RDPoint powerTwo = powerArray.get(1);
-            RDPoint powerThree = powerArray.get(2);
-            RDPoint powerFour = powerArray.get(3);
-            RDCommandSet speedSet = new RDCommandSet.RDCommandSetBuilder()
-                    .withCommand(new RDLayerSpeedCommand(layerNumber, speed))
-                    .build();
-
-            stream.write(RDEncoder.encode(speedSet));
-
-            RDCommandSet powerSet = new RDCommandSet.RDCommandSetBuilder()
-                    .withCommand(new RDPowerCommand.RDPowerCommandBuilder()
-                            .withPower(powerOne, 1)
-                            .withPower(powerTwo, 2)
-                            .withPower(powerThree, 3)
-                            .withPower(powerFour, 4)
-                            .withLayerNumber(layerNumber)
-                            .build()).build();
-            stream.write(RDEncoder.encode(powerSet));
-
+            setLayerSpeedAndPowerLevels(layer, stream, layerNumber);
             setLayerBoundingBoxes(layer, layerNumber, stream);
             layerNumber++;
         }
+    }
+
+    private void setLayerSpeedAndPowerLevels(RDLayer layer, ByteArrayOutputStream stream, int layerNumber) throws IOException {
+        List<RDPoint> powerArray = new ArrayList<>();
+        //TODO this can be moved out to a method to set power, set RGB etc.
+        while (powerArray.size() < 8) {
+            powerArray.add(layer.power());
+        }
+        int speed = layer.speed();
+
+        RDPoint powerOne = powerArray.get(0);
+        RDPoint powerTwo = powerArray.get(1);
+        RDPoint powerThree = powerArray.get(2);
+        RDPoint powerFour = powerArray.get(3);
+        RDCommandSet speedSet = new RDCommandSet.RDCommandSetBuilder()
+                .withCommand(new RDLayerSpeedCommand(layerNumber, speed))
+                .build();
+
+        stream.write(RDEncoder.encode(speedSet));
+
+        RDCommandSet powerSet = new RDCommandSet.RDCommandSetBuilder()
+                .withCommand(new RDPowerCommand.RDPowerCommandBuilder()
+                        .withPower(powerOne, 1)
+                        .withPower(powerTwo, 2)
+                        .withPower(powerThree, 3)
+                        .withPower(powerFour, 4)
+                        .withLayerNumber(layerNumber)
+                        .build()).build();
+        stream.write(RDEncoder.encode(powerSet));
     }
 
     private void setLayerBoundingBoxes(RDLayer layer, int layerNumber, ByteArrayOutputStream stream) throws IOException{
