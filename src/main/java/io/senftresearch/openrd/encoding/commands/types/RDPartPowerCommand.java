@@ -9,7 +9,7 @@ import io.senftresearch.openrd.encoding.commands.types.process.RDCommandArg;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-public class RDPowerCommand extends AbstractRDCommand {
+public class RDPartPowerCommand extends AbstractRDCommand {
     private RDPoint powerOne;
     private RDPoint powerTwo;
     private RDPoint powerThree;
@@ -19,10 +19,10 @@ public class RDPowerCommand extends AbstractRDCommand {
     @Override
     public RDCommandArg[] getArgs() {
         return Stream.of(
-                        createPowerArgs(RDCommandHex.RD_POWER_ONE_MIN, RDCommandHex.RD_POWER_ONE_MAX, powerOne),
-                        createPowerArgs(RDCommandHex.RD_POWER_TWO_MIN, RDCommandHex.RD_POWER_TWO_MAX, powerTwo),
-                        createPowerArgs(RDCommandHex.RD_POWER_THREE_MIN, RDCommandHex.RD_POWER_THREE_MAX, powerThree),
-                        createPowerArgs(RDCommandHex.RD_POWER_FOUR_MIN, RDCommandHex.RD_POWER_FOUR_MAX, powerFour)
+                        createPowerArgs(RDCommandHex.RD_PART_POWER_ONE_MIN, RDCommandHex.RD_PART_POWER_ONE_MAX, powerOne),
+                        createPowerArgs(RDCommandHex.RD_PART_POWER_TWO_MIN, RDCommandHex.RD_PART_POWER_TWO_MAX, powerTwo),
+                        createPowerArgs(RDCommandHex.RD_PART_POWER_THREE_MIN, RDCommandHex.RD_PART_POWER_THREE_MAX, powerThree),
+                        createPowerArgs(RDCommandHex.RD_PART_POWER_FOUR_MIN, RDCommandHex.RD_PART_POWER_FOUR_MAX, powerFour)
                 )
                 .flatMap(Arrays::stream)
                 .toArray(RDCommandArg[]::new);
@@ -42,7 +42,7 @@ public class RDPowerCommand extends AbstractRDCommand {
         };
     }
 
-    public static class RDPowerCommandBuilder extends AbstractRDCommandBuilder<RDPowerCommandBuilder>{
+    public static class RDPartPowerCommandBuilder extends AbstractRDCommandBuilder<RDPartPowerCommandBuilder>{
         private RDPoint powerOne;
         private RDPoint powerTwo;
         private RDPoint powerThree;
@@ -51,7 +51,7 @@ public class RDPowerCommand extends AbstractRDCommand {
 
         @Override
         protected AbstractRDCommand create() {
-            RDPowerCommand command = new RDPowerCommand();
+            RDPartPowerCommand command = new RDPartPowerCommand();
             command.powerOne = this.powerOne;
             command.powerTwo = this.powerTwo;
             command.powerThree = this.powerThree;
@@ -65,7 +65,7 @@ public class RDPowerCommand extends AbstractRDCommand {
             return powerOne != null && powerTwo != null && powerThree != null && powerFour != null;
         }
 
-        public RDPowerCommandBuilder withPower(RDPoint power, int powerNumber){
+        public RDPartPowerCommandBuilder withPower(RDPoint power, int powerNumber){
             switch(powerNumber){
                 case 1:
                     this.powerOne = power;
@@ -85,7 +85,7 @@ public class RDPowerCommand extends AbstractRDCommand {
             return this;
         }
 
-        public RDPowerCommandBuilder withLayerNumber(int layerNumber){
+        public RDPartPowerCommandBuilder withLayerNumber(int layerNumber){
             this.layerNumber = layerNumber;
             return this;
         }

@@ -123,7 +123,7 @@ public class RDHeaderData implements RDData {
         stream.write(RDEncoder.encode(speedSet));
 
         RDCommandSet powerSet = new RDCommandSet.RDCommandSetBuilder()
-                .withCommand(new RDPowerCommand.RDPowerCommandBuilder()
+                .withCommand(new RDPartPowerCommand.RDPartPowerCommandBuilder()
                         .withPower(powerOne, 1)
                         .withPower(powerTwo, 2)
                         .withPower(powerThree, 3)

@@ -5,11 +5,18 @@ import io.senftresearch.openrd.encoding.commands.AbstractRDCommand;
 import io.senftresearch.openrd.encoding.commands.RDCommandHex;
 import io.senftresearch.openrd.encoding.commands.types.process.RDCommandArg;
 
-public class RDEnableLaserTwoOffsetZeroCommand extends AbstractRDCommand {
+public class RDVelocityCommand extends AbstractRDCommand {
+    private final int speed;
+
+    public RDVelocityCommand(int speed){
+        this.speed = speed;
+    }
+
     @Override
     public RDCommandArg[] getArgs() {
         return new RDCommandArg[]{
-                new RDCommandArg(RDCommandHex.RD_ENABLE_LASER_TWO_OFFSET_ZERO.getHexCode(), RDEncodingType.HEX)
+                new RDCommandArg(RDCommandHex.RD_VELOCITY.getHexCode(), RDEncodingType.HEX),
+                new RDCommandArg(speed, RDEncodingType.NUMBER)
         };
     }
 }

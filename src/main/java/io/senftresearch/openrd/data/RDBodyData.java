@@ -6,7 +6,7 @@ import io.senftresearch.openrd.RDLayer;
 import io.senftresearch.openrd.RDPoint;
 import io.senftresearch.openrd.encoding.RDEncoder;
 import io.senftresearch.openrd.encoding.commands.RDCommandSet;
-import io.senftresearch.openrd.encoding.commands.types.RDEnableLaserTwoOffsetZeroCommand;
+import io.senftresearch.openrd.encoding.commands.types.laser.RDEnableLaserTwoOffsetZeroCommand;
 import io.senftresearch.openrd.encoding.commands.types.layer.RDAirAssistCommand;
 import io.senftresearch.openrd.encoding.commands.types.layer.RDEndLayerCommand;
 import io.senftresearch.openrd.encoding.commands.types.layer.RDLayerDeviceZeroCommand;
@@ -63,6 +63,7 @@ public class RDBodyData implements RDData{
                 .withCommand(new RDAirAssistCommand(true))
                 .build();
         bodyDataStream.write(RDEncoder.encode(proLogSet));
+
         bodyDataStream.write(RDEncoder.encode("-n-p-p-p-p-p-p-p-p-",
                 "c9 02", speed,
                 "c6 15 00 00 00 00 00 c6 16 00 00 00 00 00 c6 01", powerOne.x(),
