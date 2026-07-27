@@ -78,7 +78,7 @@ public enum RDCommandHex {
     RD_ARRAY_START("ea 00"),
     RD_ARRAY_END("eb"),
     RD_BLOCK_END("e7 00"),
-    RD_WRITE_OR_RESPOND_PARAM("da 01"),
+    RD_WRITE_OR_RESPOND_PARAM("da 01 06 20"),
     RD_SET_CURRENT_ARRAY_INDEX("e7 60 00");
 
     private final String hexCode;
