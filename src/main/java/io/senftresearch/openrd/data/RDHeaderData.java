@@ -51,25 +51,19 @@ public class RDHeaderData implements RDData {
 
             headerData.write(Objects.requireNonNull(RDEncoder.encode(headerStartSet)));
 
-            RDCommand initCommand = new RDPartInitCommand.RDPartInitCommandBuilder()
-                    .withMaxLayerArg(layers.size()-1)
-                    .build();
-
             RDCommandSet headerInitSet = new RDCommandSet.RDCommandSetBuilder()
-                    .withCommand(initCommand)
+                    .withCommand(new RDPartInitCommand.RDPartInitCommandBuilder()
+                            .withMaxLayerArg(layers.size()-1)
+                            .build())
                     .build();
 
             setBoundingBoxData(headerData);
             setLayerHeaders(layers, headerData);
             headerData.write(RDEncoder.encode(headerInitSet));
 
-            RDCommandSet offsetCommandSet = new RDCommandSet.RDCommandSetBuilder()
+            RDCommandSet boundariesCommandSet = new RDCommandSet.RDCommandSetBuilder()
                     .withCommand(new RDPenOffsetCommand())
                     .withCommand(new RDLayerOffsetCommand())
-                    .build();
-            headerData.write(RDEncoder.encode(offsetCommandSet));
-
-            RDCommandSet boundariesCommandSet = new RDCommandSet.RDCommandSetBuilder()
                     .withCommand(new RDDisplayOffsetCommand())
                     .withCommand(new RDElementMaxIndexCommand())
                     .withCommand(new RDElementNameMaxIndexCommand())
@@ -83,8 +77,8 @@ public class RDHeaderData implements RDData {
                     .withCommand(new RDArrayAddCommand(boundingBox.topLeft()))
                     .withCommand(new RDArrayMirrorCommand())
                     .withCommand(new RDArrayRepeatCommand(boundingBox.bottomRight()))
-
                     .build();
+
             headerData.write(RDEncoder.encode(boundariesCommandSet));
 
         } catch (IOException e) {
@@ -140,14 +134,14 @@ public class RDHeaderData implements RDData {
 
     private void setLayerBoundingBoxes(RDLayer layer, int layerNumber, ByteArrayOutputStream stream) throws IOException{
 
-        RDCommandSet commandSet = new RDCommandSet.RDCommandSetBuilder()
+        RDCommandSet layerBoundingBoxSet = new RDCommandSet.RDCommandSetBuilder()
                 .withCommand(new RDLayerColourSetCommand(layer.colour(), layerNumber))
                 .withCommand(new RDPartWorkModeCommand(layerNumber))
                 .withCommand(new RDPartPointsCommand(layer.boundingBox(), layerNumber))
                 .withCommand(new RDPartPointsExCommand(layer.boundingBox(), layerNumber))
                 .build();
 
-        stream.write(RDEncoder.encode(commandSet));
+        stream.write(RDEncoder.encode(layerBoundingBoxSet));
     }
 
     private RDBoundingBox combineBoundingBoxes(RDBoundingBox boundingBox, RDLayer layer) {
