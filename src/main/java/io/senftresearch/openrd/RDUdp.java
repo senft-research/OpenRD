@@ -6,7 +6,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
-
+//TODO Forgive me god, I used an LLM to very dirtily transfer the python UDP logic to Java (turns out having 10 minutes left
+//     to test if it works on the Laser Cutter is an easy way to get tempted to use the devil's tools haha).
+//     To use this code in the final product would be unacceptable. Going to redo from scratch.
 public class RDUdp {
     public static final int NETWORK_TIMEOUT = 3000; // msecs
     public static final String INADDR_ANY_DOTTED = "0.0.0.0";
