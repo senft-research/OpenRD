@@ -12,7 +12,6 @@ public class RDPowerCommand extends AbstractRDCommand {
     private RDPoint powerTwo;
     private RDPoint powerThree;
     private RDPoint powerFour;
-    private int layerNumber;
 
     @Override
     public RDCommandArg[] getArgs() {
@@ -31,11 +30,9 @@ public class RDPowerCommand extends AbstractRDCommand {
                                            RDPoint power) {
         return new RDCommandArg[] {
                 new RDCommandArg(minHex.getHexCode(), RDEncodingType.HEX),
-                new RDCommandArg(layerNumber, RDEncodingType.BYTE),
                 new RDCommandArg(power.x(), RDEncodingType.PERCENT),
 
                 new RDCommandArg(maxHex.getHexCode(), RDEncodingType.HEX),
-                new RDCommandArg(layerNumber, RDEncodingType.BYTE),
                 new RDCommandArg(power.y(), RDEncodingType.PERCENT)
         };
     }
@@ -45,7 +42,6 @@ public class RDPowerCommand extends AbstractRDCommand {
         private RDPoint powerTwo;
         private RDPoint powerThree;
         private RDPoint powerFour;
-        private int layerNumber;
 
         @Override
         protected AbstractRDCommand create() {
@@ -54,7 +50,6 @@ public class RDPowerCommand extends AbstractRDCommand {
             command.powerTwo = this.powerTwo;
             command.powerThree = this.powerThree;
             command.powerFour = this.powerFour;
-            command.layerNumber = layerNumber;
             return command;
         }
 
@@ -80,11 +75,6 @@ public class RDPowerCommand extends AbstractRDCommand {
                 default:
                     throw new IllegalArgumentException("The power value (" + powerNumber + ") is not a valid power!");
             }
-            return this;
-        }
-
-        public RDPowerCommandBuilder withLayerNumber(int layerNumber){
-            this.layerNumber = layerNumber;
             return this;
         }
     }
