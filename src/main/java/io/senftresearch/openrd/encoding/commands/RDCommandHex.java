@@ -2,6 +2,13 @@ package io.senftresearch.openrd.encoding.commands;
 
 public enum RDCommandHex {
     RD_INIT_COMMAND("ca 22"),
+    RD_END_LAYER_COMMAND("ca 01 00"),
+    RD_PART("ca 02"),
+    RD_EN_LASER_TWO_OFFSET_ZERO("ca 01 30"),
+    RD_EN_LASER_TWO_OFFSET_ONE("ca 01 31"),
+    RD_LAYER_DEVICE_ZERO("ca 01 10"),
+    RD_AIR_ASSIST_ON("ca 01 13"),
+    RD_AIR_ASSIST_OFF("ca 01 12"),
     RD_LAYER_COLOUR_SET("ca 06"),
     RD_PART_WORK_MODE("ca 41"),
     RD_PART_MIN_POINT("e7 52"),
