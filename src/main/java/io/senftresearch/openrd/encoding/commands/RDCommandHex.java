@@ -1,6 +1,14 @@
 package io.senftresearch.openrd.encoding.commands;
 
 public enum RDCommandHex {
+    RD_RELATIVE_MOVE_HORIZONTAL("8a"),
+    RD_RELATIVE_MOVE_VERTICAL("8b"),
+    RD_RELATIVE_MOVE("89"),
+    RD_RELATIVE_CUT_HORIZONTAL("aa"),
+    RD_RELATIVE_CUT_VERTICAL("ab"),
+    RD_RELATIVE_CUT("a9"),
+    RD_ABSOLUTE_MOVE("88"),
+    RD_ABSOLUTE_CUT("a8"),
     RD_INIT_COMMAND("ca 22"),
     RD_END_LAYER_COMMAND("ca 01 00"),
     RD_PART("ca 02"),
