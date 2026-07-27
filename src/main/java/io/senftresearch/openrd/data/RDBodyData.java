@@ -5,6 +5,12 @@ import io.senftresearch.openrd.RDBoundingBox;
 import io.senftresearch.openrd.RDLayer;
 import io.senftresearch.openrd.RDPoint;
 import io.senftresearch.openrd.encoding.RDEncoder;
+import io.senftresearch.openrd.encoding.commands.RDCommandSet;
+import io.senftresearch.openrd.encoding.commands.types.RDEnableLaserTwoOffsetZeroCommand;
+import io.senftresearch.openrd.encoding.commands.types.layer.RDAirAssistCommand;
+import io.senftresearch.openrd.encoding.commands.types.layer.RDEndLayerCommand;
+import io.senftresearch.openrd.encoding.commands.types.layer.RDLayerDeviceZeroCommand;
+import io.senftresearch.openrd.encoding.commands.types.part.RDPartCommand;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -49,7 +55,14 @@ public class RDBodyData implements RDData{
 
         int speed = layer.speed();
 
-        bodyDataStream.write(RDEncoder.encode("-b-", "ca 01 00 ca 02", layerNumber, "ca 01 30 ca 01 10 ca 01 13"));
+        RDCommandSet proLogSet = new RDCommandSet.RDCommandSetBuilder()
+                .withCommand(new RDEndLayerCommand())
+                .withCommand(new RDPartCommand(layerNumber))
+                .withCommand(new RDEnableLaserTwoOffsetZeroCommand())
+                .withCommand(new RDLayerDeviceZeroCommand())
+                .withCommand(new RDAirAssistCommand(true))
+                .build();
+        bodyDataStream.write(RDEncoder.encode(proLogSet));
         bodyDataStream.write(RDEncoder.encode("-n-p-p-p-p-p-p-p-p-",
                 "c9 02", speed,
                 "c6 15 00 00 00 00 00 c6 16 00 00 00 00 00 c6 01", powerOne.x(),
