@@ -1,4 +1,4 @@
-package io.senftresearch.openrd.encoding.commands.types;
+package io.senftresearch.openrd.encoding.commands.types.props;
 
 import io.senftresearch.openrd.RDPoint;
 import io.senftresearch.openrd.encoding.RDEncodingType;
