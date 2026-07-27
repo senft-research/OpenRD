@@ -3,118 +3,149 @@ package io.senftresearch.openrd.data;
 import io.senftresearch.openrd.RDBoundingBox;
 import io.senftresearch.openrd.RDLayer;
 import io.senftresearch.openrd.RDPoint;
+import io.senftresearch.openrd.encoding.commands.RDCommandSet;
+import io.senftresearch.openrd.encoding.RDEncoder;
+import io.senftresearch.openrd.encoding.commands.types.layer.RDLayerOffsetCommand;
+import io.senftresearch.openrd.encoding.commands.types.part.*;
+import io.senftresearch.openrd.encoding.commands.types.props.RDPenOffsetCommand;
+import io.senftresearch.openrd.encoding.commands.types.array.*;
+import io.senftresearch.openrd.encoding.commands.types.boundaries.RDDocumentPointCommand;
+import io.senftresearch.openrd.encoding.commands.types.boundaries.RDFeedRepeatCommand;
+import io.senftresearch.openrd.encoding.commands.types.boundaries.RDProcessBoundingBoxCommand;
+import io.senftresearch.openrd.encoding.commands.types.element.*;
+import io.senftresearch.openrd.encoding.commands.types.layer.RDLayerColourSetCommand;
+import io.senftresearch.openrd.encoding.commands.types.layer.RDLayerSpeedCommand;
+import io.senftresearch.openrd.encoding.commands.types.process.ProcessType;
+import io.senftresearch.openrd.encoding.commands.types.process.RDProcessCommand;
+import io.senftresearch.openrd.encoding.commands.types.process.RDProcessRepeatCommand;
+import io.senftresearch.openrd.encoding.commands.types.props.RDDisplayOffsetCommand;
+import io.senftresearch.openrd.encoding.commands.types.props.RDEnableBlockCuttingCommand;
+import io.senftresearch.openrd.encoding.commands.types.props.RDRefPointModeCommand;
+import io.senftresearch.openrd.encoding.commands.types.props.RDRefPointSetCommand;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RDHeaderData implements RDData {
     private RDBoundingBox boundingBox;
-    private ByteArrayOutputStream headerData;
+    private final ByteArrayOutputStream headerData;
 
     public RDHeaderData(List<RDLayer> layers, RDBoundingBox globalBoundingBox) {
 
         layers.forEach(layer -> this.boundingBox = combineBoundingBoxes(this.boundingBox, layer));
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        this.headerData = new ByteArrayOutputStream();
         try {
-            // Not sure what this does
-            stream.write(RDEncoder.encodeHex("""
-            d8 12           # Red Light on ?
-            f0 f1 02 00     # file type ?
-            d8 00           # Green Light off ?
-            """));
 
-            setBoundingBoxData(stream);
-            setLayerHeaders(layers, stream);
+            RDCommandSet headerStartSet = new RDCommandSet.RDCommandSetBuilder()
+                    .withCommand(new RDRefPointModeCommand
+                            .RDRefPointModeCommandBuilder()
+                            .withPointMode(0)
+                            .build())
+                    .withCommand(new RDRefPointSetCommand())
+                    .withCommand(new RDEnableBlockCuttingCommand())
+                    .withCommand(new RDProcessCommand(ProcessType.START))
+                    .build();
 
-            stream.write(RDEncoder.encode("-b-", "ca 22", layers.size()-1, "e7 54 00 00 00 00 00 00 e7 54 01 00 00 00"));
-            //TODO needs separating to its own method
-            int xmin = this.boundingBox.topLeft().x();
-            int ymin = this.boundingBox.topLeft().y();
-            int xmax = this.boundingBox.bottomRight().x();
-            int ymax = this.boundingBox.bottomRight().y();
-            stream.write(RDEncoder.encode(
-                    "-nn-nn-nn-nn-nn-nn-nn-nn-",
-                    "00 00 e7 55 00 00 00 00 00 00" +
-                            " e7 55 01 00 00 00 00 00 " +
-                            "f1 03 00 00 00 00 00 00 00 00 00 00 f1 00 00 f1 01 00 f2 00 00 f2 01 00 f2 02 05 2a 39 1c 41 04 6a 15 08 20 f2 03",
-                    xmin, ymin,
-                    "f2 04",
-                    xmax, ymax,
-                    "f2 06",
-                    xmin, ymin,
-                    "f2 07 00 f2 05 00 01 00 01",
-                    xmax, ymax,
-                    "ea 00 e7 60 00 e7 13",
-                    xmin, ymin,
-                    "e7 17",
-                    xmax, ymax,
-                    "e7 23",
-                    xmin, ymin,
-                    "e7 24 00 e7 08 00 01 00 01",
-                    xmax, ymax, ""
-            ));
-            this.headerData = stream;
+            headerData.write(Objects.requireNonNull(RDEncoder.encode(headerStartSet)));
+
+            RDCommandSet headerInitSet = new RDCommandSet.RDCommandSetBuilder()
+                    .withCommand(new RDPartInitCommand.RDPartInitCommandBuilder()
+                            .withMaxLayerArg(layers.size()-1)
+                            .build())
+                    .build();
+
+            setBoundingBoxData(headerData);
+            setLayerHeaders(layers, headerData);
+            headerData.write(RDEncoder.encode(headerInitSet));
+
+            RDCommandSet boundariesCommandSet = new RDCommandSet.RDCommandSetBuilder()
+                    .withCommand(new RDPenOffsetCommand())
+                    .withCommand(new RDLayerOffsetCommand())
+                    .withCommand(new RDDisplayOffsetCommand())
+                    .withCommand(new RDElementMaxIndexCommand())
+                    .withCommand(new RDElementNameMaxIndexCommand())
+                    .withCommand(new RDElementIndexAndNameCommand())
+                    .withCommand(new RDElementArrayBoundariesCommand(boundingBox))
+                    .withCommand(new RDElementArrayAddCommand(boundingBox.topLeft()))
+                    .withCommand(new RDElementArrayCommand(boundingBox.bottomRight()))
+                    .withCommand(new RDArrayStartCommand())
+                    .withCommand(new RDSetCurrentElementIndexCommand())
+                    .withCommand(new RDArrayBoundariesCommand(boundingBox))
+                    .withCommand(new RDArrayAddCommand(boundingBox.topLeft()))
+                    .withCommand(new RDArrayMirrorCommand())
+                    .withCommand(new RDArrayRepeatCommand(boundingBox.bottomRight()))
+                    .build();
+
+            headerData.write(RDEncoder.encode(boundariesCommandSet));
+
         } catch (IOException e) {
             throw new RuntimeException("Failed to assemble header binary streams", e);
         }
     }
 
     private void setBoundingBoxData(ByteArrayOutputStream stream) throws IOException {
-        int xmin = this.boundingBox.topLeft().x();
-        int ymin = this.boundingBox.topLeft().y();
-        int xmax = this.boundingBox.bottomRight().x();
-        int ymax = this.boundingBox.bottomRight().y();
-
-        stream.write(RDEncoder.encode("-nn", "e7 06", (double) 0, (double) 0));
-        stream.write(RDEncoder.encode("-nn", "e7 03", (double) xmin, (double) ymin));
-        stream.write(RDEncoder.encode("-nn", "e7 07", (double) xmax, (double) ymax));
-        stream.write(RDEncoder.encode("-nn", "e7 50", (double) xmin, (double) ymin));
-        stream.write(RDEncoder.encode("-nn", "e7 51", (double) xmax, (double) ymax));
-        stream.write(RDEncoder.encode("-nn", "e7 04 00 01 00 01", (double) 0, (double) 0));
-        stream.write(RDEncoder.encode("-",   "e7 05 00"));
+        RDCommandSet boundingBoxSet = new RDCommandSet.RDCommandSetBuilder()
+                .withCommand(new RDFeedRepeatCommand(0,0))
+                .withCommand(new RDProcessBoundingBoxCommand(this.boundingBox))
+                .withCommand(new RDDocumentPointCommand(boundingBox))
+                .withCommand(new RDProcessRepeatCommand(0, 0))
+                .withCommand(new RDArrayDirectionCommand())
+                .build();
+        stream.write(RDEncoder.encode(boundingBoxSet));
     }
 
     private void setLayerHeaders(List<RDLayer> layers, ByteArrayOutputStream stream) throws IOException {
         int layerNumber = 0;
         for (RDLayer layer : layers) {
-            List<RDPoint> powerArray = new ArrayList<>();
-            //TODO this can be moved out to a method to set power, set RGB etc.
-            while (powerArray.size() < 8) {
-                powerArray.add(layer.power());
-            }
-            int speed = layer.speed();
-
-            RDPoint powerOne = powerArray.get(0);
-            RDPoint powerTwo = powerArray.get(1);
-            RDPoint powerThree = powerArray.get(2);
-            RDPoint powerFour = powerArray.get(3);
-            stream.write(RDEncoder.encode("-bn", "c9 04", layerNumber, speed));
-
-            stream.write(RDEncoder.encode("-bp-bp", "c6 31", layerNumber, powerOne.x(), "c6 32", layerNumber, powerOne.y()));
-            stream.write(RDEncoder.encode("-bp-bp", "c6 41", layerNumber, powerTwo.x(), "c6 42", layerNumber, powerTwo.y()));
-            stream.write(RDEncoder.encode("-bp-bp", "c6 35", layerNumber, powerThree.x(), "c6 36", layerNumber, powerThree.y()));
-            stream.write(RDEncoder.encode("-bp-bp", "c6 37", layerNumber, powerFour.x(), "c6 38", layerNumber, powerFour.y()));
-
+            setLayerSpeedAndPowerLevels(layer, stream, layerNumber);
             setLayerBoundingBoxes(layer, layerNumber, stream);
             layerNumber++;
         }
     }
 
-    private void setLayerBoundingBoxes(RDLayer layer, int layerNumber, ByteArrayOutputStream stream) throws IOException{
-        int boundBoxTopLeftX = layer.boundingBox().topLeft().x();
-        int boundBoxTopLeftY = layer.boundingBox().topLeft().y();
-        int boundBoxBottomRightX = layer.boundingBox().bottomRight().x();
-        int boundBoxBottomRightY = layer.boundingBox().bottomRight().y();
-        stream.write(RDEncoder.encode("-bc-bb-bnn-bnn-bnn-bnn-",
-                "ca 06", layerNumber, layer.colour().getRGBArray(),
-                "ca 41", layerNumber, 0,
-                "e7 52", layerNumber, boundBoxTopLeftX, boundBoxTopLeftY,
-                "e7 53", layerNumber, boundBoxBottomRightX, boundBoxBottomRightY,
-                "e7 61", layerNumber, boundBoxTopLeftX, boundBoxTopLeftY,
-                "e7 62", layerNumber, boundBoxBottomRightX, boundBoxBottomRightY,""));
+    private void setLayerSpeedAndPowerLevels(RDLayer layer, ByteArrayOutputStream stream, int layerNumber) throws IOException {
+        List<RDPoint> powerArray = new ArrayList<>();
+        while (powerArray.size() < 8) {
+            powerArray.add(layer.power());
+        }
+        int speed = layer.speed();
+
+        RDPoint powerOne = powerArray.get(0);
+        RDPoint powerTwo = powerArray.get(1);
+        RDPoint powerThree = powerArray.get(2);
+        RDPoint powerFour = powerArray.get(3);
+        RDCommandSet speedSet = new RDCommandSet.RDCommandSetBuilder()
+                .withCommand(new RDLayerSpeedCommand(layerNumber, speed))
+                .build();
+
+        stream.write(RDEncoder.encode(speedSet));
+
+        RDCommandSet powerSet = new RDCommandSet.RDCommandSetBuilder()
+                .withCommand(new RDPartPowerCommand.RDPartPowerCommandBuilder()
+                        .withPower(powerOne, 1)
+                        .withPower(powerTwo, 2)
+                        .withPower(powerThree, 3)
+                        .withPower(powerFour, 4)
+                        .withLayerNumber(layerNumber)
+                        .build()).build();
+        stream.write(RDEncoder.encode(powerSet));
     }
+
+    private void setLayerBoundingBoxes(RDLayer layer, int layerNumber, ByteArrayOutputStream stream) throws IOException{
+
+        RDCommandSet layerBoundingBoxSet = new RDCommandSet.RDCommandSetBuilder()
+                .withCommand(new RDLayerColourSetCommand(layer.colour(), layerNumber))
+                .withCommand(new RDPartWorkModeCommand(layerNumber))
+                .withCommand(new RDPartPointsCommand(layer.boundingBox(), layerNumber))
+                .withCommand(new RDPartPointsExCommand(layer.boundingBox(), layerNumber))
+                .build();
+
+        stream.write(RDEncoder.encode(layerBoundingBoxSet));
+    }
+
     private RDBoundingBox combineBoundingBoxes(RDBoundingBox boundingBox, RDLayer layer) {
         if(boundingBox == null) return layer.boundingBox();
         RDBoundingBox layerBox = layer.boundingBox();

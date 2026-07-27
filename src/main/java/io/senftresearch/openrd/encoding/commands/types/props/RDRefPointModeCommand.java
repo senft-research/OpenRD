@@ -1,0 +1,45 @@
+package io.senftresearch.openrd.encoding.commands.types.props;
+
+import io.senftresearch.openrd.encoding.RDEncodingType;
+import io.senftresearch.openrd.encoding.commands.AbstractRDCommand;
+import io.senftresearch.openrd.encoding.commands.RDCommandHex;
+import io.senftresearch.openrd.encoding.commands.types.process.RDCommandArg;
+
+public class RDRefPointModeCommand extends AbstractRDCommand {
+    private int refPointMode = 0;
+
+
+    @Override
+    public RDCommandArg[] getArgs() {
+        RDCommandHex commandHex = switch (refPointMode) {
+            case 1 -> RDCommandHex.RD_REF_POINT_MODE_ONE;
+            case 2 -> RDCommandHex.RD_REF_POINT_MODE_TWO;
+            default -> RDCommandHex.RD_REF_POINT_MODE_ZERO;
+        };
+        return new RDCommandArg[]{
+                new RDCommandArg(commandHex.getHexCode(), RDEncodingType.HEX)
+        };
+    }
+
+    public static class RDRefPointModeCommandBuilder extends AbstractRDCommandBuilder<RDRefPointModeCommandBuilder>{
+        private int refPointMode;
+
+
+        @Override
+        protected AbstractRDCommand create() {
+            RDRefPointModeCommand command = new RDRefPointModeCommand();
+            command.refPointMode = refPointMode;
+            return command;
+        }
+
+        @Override
+        protected boolean requiredArgsInitialized() {
+            return true;
+        }
+
+        public RDRefPointModeCommandBuilder withPointMode(int refPointMode){
+            this.refPointMode = refPointMode;
+            return this;
+        }
+    }
+}

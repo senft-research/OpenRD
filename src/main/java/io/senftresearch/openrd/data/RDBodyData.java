@@ -4,6 +4,17 @@ import io.senftresearch.openrd.OpenRD;
 import io.senftresearch.openrd.RDBoundingBox;
 import io.senftresearch.openrd.RDLayer;
 import io.senftresearch.openrd.RDPoint;
+import io.senftresearch.openrd.encoding.RDEncoder;
+import io.senftresearch.openrd.encoding.commands.RDCommandSet;
+import io.senftresearch.openrd.encoding.commands.types.props.RDPowerCommand;
+import io.senftresearch.openrd.encoding.commands.types.actions.RDEnableExIOStartCommand;
+import io.senftresearch.openrd.encoding.commands.types.actions.RDEnableLaserTubeStartCommand;
+import io.senftresearch.openrd.encoding.commands.types.props.RDVelocityCommand;
+import io.senftresearch.openrd.encoding.commands.types.laser.*;
+import io.senftresearch.openrd.encoding.commands.types.layer.RDAirAssistCommand;
+import io.senftresearch.openrd.encoding.commands.types.layer.RDEndLayerCommand;
+import io.senftresearch.openrd.encoding.commands.types.layer.RDLayerDeviceZeroCommand;
+import io.senftresearch.openrd.encoding.commands.types.part.RDPartCommand;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,18 +59,24 @@ public class RDBodyData implements RDData{
 
         int speed = layer.speed();
 
-        bodyDataStream.write(RDEncoder.encode("-b-", "ca 01 00 ca 02", layerNumber, "ca 01 30 ca 01 10 ca 01 13"));
-        bodyDataStream.write(RDEncoder.encode("-n-p-p-p-p-p-p-p-p-",
-                "c9 02", speed,
-                "c6 15 00 00 00 00 00 c6 16 00 00 00 00 00 c6 01", powerOne.x(),
-                "c6 02", powerOne.y(),
-                "c6 21", powerTwo.x(),
-                "c6 22", powerTwo.y(),
-                "c6 05", powerThree.x(),
-                "c6 06", powerThree.y(),
-                "c6 07", powerFour.x(),
-                "c6 08", powerFour.y(),
-                "ca 03 01 ca 10 00"));
+        RDCommandSet proLogSet = new RDCommandSet.RDCommandSetBuilder()
+                .withCommand(new RDEndLayerCommand())
+                .withCommand(new RDPartCommand(layerNumber))
+                .withCommand(new RDEnableLaserTwoOffsetZeroCommand())
+                .withCommand(new RDLayerDeviceZeroCommand())
+                .withCommand(new RDAirAssistCommand(true))
+                .withCommand(new RDVelocityCommand(speed))
+                .withCommand(new RDLaserOnOffTwoCommand())
+                .withCommand(new RDPowerCommand.RDPowerCommandBuilder()
+                        .withPower(powerOne, 1)
+                        .withPower(powerTwo, 2)
+                        .withPower(powerThree,3)
+                        .withPower(powerFour, 4)
+                        .build())
+                .withCommand(new RDEnableLaserTubeStartCommand())
+                .withCommand(new RDEnableExIOStartCommand())
+                .build();
+        bodyDataStream.write(RDEncoder.encode(proLogSet));
     }
 
     private RDPoint travelLogic(ByteArrayOutputStream bodyDataStream, RDLayer layer, RDPoint lastPoint) throws IOException{
@@ -76,30 +93,48 @@ public class RDBodyData implements RDData{
 
                     if (point.y() == lastPoint.y()) {
                         if (travel) {
-                            bodyDataStream.write(RDEncoder.encode("-r", "8a", point.x() - lastPoint.x()));
+                            bodyDataStream.write(RDEncoder.encode(new RDLaserRelativeMoveCommand.RDLaserRelativeMoveCommandBuilder()
+                                    .withTranslationType(LaserTranslationType.HORIZONTAL)
+                                    .withXCoord(point.x() - lastPoint.x())
+                                    .build()));
                         } else {
-                            bodyDataStream.write(RDEncoder.encode("-r", "aa", point.x() - lastPoint.x()));
+                            bodyDataStream.write(RDEncoder.encode(new RDLaserRelativeCutCommand.RDLaserRelativeCutCommandBuilder()
+                                    .withTranslationType(LaserTranslationType.HORIZONTAL)
+                                    .withXCoord(point.x() - lastPoint.x())
+                                    .build()));
                         }
                     } else if (point.x() == lastPoint.x()) {
                         if (travel) {
-                            bodyDataStream.write(RDEncoder.encode("-r", "8b", point.y() - lastPoint.y()));
+                            bodyDataStream.write(RDEncoder.encode(new RDLaserRelativeMoveCommand.RDLaserRelativeMoveCommandBuilder()
+                                    .withTranslationType(LaserTranslationType.VERTICAL)
+                                    .withXCoord(point.y() - lastPoint.y())
+                                    .build()));
                         } else {
-                            bodyDataStream.write(RDEncoder.encode("-r", "ab", point.y() - lastPoint.y()));
+                            bodyDataStream.write(RDEncoder.encode(new RDLaserRelativeCutCommand.RDLaserRelativeCutCommandBuilder()
+                                    .withTranslationType(LaserTranslationType.VERTICAL)
+                                    .withXCoord(point.y() - lastPoint.y())
+                                    .build()));
                         }
                     } else {
                         if (travel) {
-                            bodyDataStream.write(RDEncoder.encode("-rr", "89", point.x() - lastPoint.x(), point.y() - lastPoint.y()));
+                            bodyDataStream.write(RDEncoder.encode(new RDLaserRelativeMoveCommand.RDLaserRelativeMoveCommandBuilder()
+                                    .withTranslationType(LaserTranslationType.COORDINATE)
+                                    .withXCoord(point.x() - lastPoint.x())
+                                    .withYCoord(point.y() - lastPoint.y())
+                                    .build()));
                         } else {
-                            bodyDataStream.write(RDEncoder.encode("-rr", "a9", point.x() - lastPoint.x(), point.y() - lastPoint.y()));
+                            bodyDataStream.write(RDEncoder.encode(new RDLaserRelativeCutCommand.RDLaserRelativeCutCommandBuilder()
+                                    .withTranslationType(LaserTranslationType.COORDINATE)
+                                    .withXCoord(point.x() - lastPoint.x())
+                                    .withYCoord(point.y() - lastPoint.y())
+                                    .build()));
                         }
                     }
                 } else {
                     relCounter = 0;
-                    if (travel) {
-                        bodyDataStream.write(RDEncoder.encode("-nn", "88", point.x(), point.y()));
-                    } else {
-                        bodyDataStream.write(RDEncoder.encode("-nn", "a8", point.x(), point.y()));
-                    }
+
+                    bodyDataStream.write(RDEncoder.encode(new RDLaserAbsoluteTranslationCommand(point.x(), point.y(), travel)));
+
 
                 }
                 lastPoint = point;

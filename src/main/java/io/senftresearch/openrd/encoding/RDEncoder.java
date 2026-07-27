@@ -1,4 +1,8 @@
-package io.senftresearch.openrd.data;
+package io.senftresearch.openrd.encoding;
+
+import io.senftresearch.openrd.encoding.commands.RDCommand;
+import io.senftresearch.openrd.encoding.commands.RDCommandSet;
+import io.senftresearch.openrd.encoding.commands.types.process.RDCommandArg;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -9,11 +13,35 @@ import java.util.regex.Pattern;
 
 public class RDEncoder {
 
+    public static byte[] encode (RDCommand command) throws IOException {
+        return encode(new RDCommandSet.RDCommandSetBuilder().withCommand(command).build());
+    }
+
+    public static byte[] encode(RDCommandSet commandSet) throws IOException {
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+
+        for(RDCommand command : commandSet.getCommands()){
+            for(RDCommandArg arg : command.getArgs()){
+                byte[] encoded = switch(arg.type()){
+                    case HEX -> encodeHex((String)arg.value());
+                    case NUMBER -> encodeNumber(((Number) arg.value()).doubleValue());
+                    case PERCENT -> encodePercent(((Number) arg.value()).doubleValue());
+                    case REL_COORD -> encodeRelCoord((((Number) arg.value()).doubleValue()));
+                    case BYTE -> encodeByte((((Number) arg.value()).doubleValue()));
+                    case COLOUR -> encodeColour((int[]) arg.value());
+                };
+                byteStream.write(encoded);
+
+            }
+
+        }
+        //TODO not impl yet
+        return byteStream.toByteArray();
+    }
     public static byte[] encode(String format, Object... args){
         if(format == null || args == null){
             throw new IllegalArgumentException("Args / format cannot be null");
         }
-        int argsLength;
 
         if(format.length() != args.length){
             throw new IllegalArgumentException("Format '" + format + "' length differs from args length=" + args.length + "(Length of format: " + format.length());

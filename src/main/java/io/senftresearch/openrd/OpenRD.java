@@ -9,7 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+//TODO need to clean up the logic in this class (taking out the odo calcs, the scramble logic, the bounding box calcs etc)
 public class OpenRD {
     private static OpenRD instance;
     public static OpenRD getInstance(){
@@ -38,7 +38,7 @@ public class OpenRD {
                 .map(layer -> layer.boundingBox() == null
                         ? new RDLayer(layer.paths(), layer.speed(), layer.power(), layer.colour(), layer.frequency(), boundingbox(layer.paths()))
                         : layer)
-                .toList(); // Creates an unmodifiable list (use collect(Collectors.toList()) if you need a mutable one)
+                .toList();
         double[] odo = new double[]{0.0, 0.0};
         for(RDLayer layer : layers){
             double[] odoToAdd = odoMeter(layer.paths(), false);
@@ -68,7 +68,7 @@ public class OpenRD {
             trailerData.getData().writeTo(combined);
 
             if(shouldScramble){
-                scrambleStreamInPlace(combined);
+                //scrambleStreamInPlace(combined);
             }
             combined.writeTo(fd);
         }
@@ -107,14 +107,12 @@ public class OpenRD {
         List<RDPoint> points = new ArrayList<>();
         paths.forEach(points::addAll);
 
-        // Initialize using the very first point of the list
         RDPoint firstPoint = points.get(0);
         int xmin = firstPoint.x();
         int xmax = firstPoint.x();
         int ymin = firstPoint.y();
         int ymax = firstPoint.y();
 
-        // Iterate through all points to find the outer boundaries
         for (RDPoint point : points) {
             if (point.x() > xmax) xmax = point.x();
             if (point.x() < xmin) xmin = point.x();
@@ -122,7 +120,6 @@ public class OpenRD {
             if (point.y() < ymin) ymin = point.y();
         }
 
-        // Map min values to topLeft and max values to bottomRight
         return new RDBoundingBox(new RDPoint(xmin, ymin), new RDPoint(xmax, ymax));
     }
     public int getForceAbs() {
@@ -135,13 +132,10 @@ public class OpenRD {
     public void scrambleStreamInPlace(ByteArrayOutputStream existingStream) {
         if (existingStream == null || existingStream.size() == 0) return;
 
-        // 1. Save the original data out of the stream
         byte[] originalBytes = existingStream.toByteArray();
 
-        // 2. Clear the stream completely
         existingStream.reset();
 
-        // 3. Write the scrambled data back into it
         for (byte b : originalBytes) {
             int unsignedByte = b & 0xFF;
             existingStream.write(scramble(unsignedByte));

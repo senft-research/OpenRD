@@ -1,5 +1,11 @@
 package io.senftresearch.openrd.data;
 
+import io.senftresearch.openrd.encoding.RDEncoder;
+import io.senftresearch.openrd.encoding.commands.RDCommandSet;
+import io.senftresearch.openrd.encoding.commands.types.RDEndFileCommand;
+import io.senftresearch.openrd.encoding.commands.types.RDWriteOrRespondParamCommand;
+import io.senftresearch.openrd.encoding.commands.types.array.RDArrayBlockEndCommand;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -13,7 +19,12 @@ public class RDTrailerData implements RDData{
     public RDTrailerData(double[] odo){
         ByteArrayOutputStream trailerDataStream = new ByteArrayOutputStream();
         try{
-            trailerDataStream.write(RDEncoder.encode("-nn-", "eb e7 00 da 01 06 20", odo[0]*0.001, odo[0]*0.001, "d7"));
+            RDCommandSet trailerSet = new RDCommandSet.RDCommandSetBuilder()
+                    .withCommand(new RDArrayBlockEndCommand())
+                    .withCommand(new RDWriteOrRespondParamCommand(odo[0]*0.001))
+                    .withCommand(new RDEndFileCommand())
+                    .build();
+            trailerDataStream.write(RDEncoder.encode(trailerSet));
             this.trailerData = trailerDataStream;
         }
         catch (IOException e){
