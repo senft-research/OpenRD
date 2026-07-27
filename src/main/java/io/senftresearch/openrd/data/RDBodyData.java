@@ -6,7 +6,7 @@ import io.senftresearch.openrd.RDLayer;
 import io.senftresearch.openrd.RDPoint;
 import io.senftresearch.openrd.encoding.RDEncoder;
 import io.senftresearch.openrd.encoding.commands.RDCommandSet;
-import io.senftresearch.openrd.encoding.commands.RDPowerCommand;
+import io.senftresearch.openrd.encoding.commands.types.RDPowerCommand;
 import io.senftresearch.openrd.encoding.commands.types.RDEnableExIOStartCommand;
 import io.senftresearch.openrd.encoding.commands.types.RDEnableLaserTubeStartCommand;
 import io.senftresearch.openrd.encoding.commands.types.RDVelocityCommand;

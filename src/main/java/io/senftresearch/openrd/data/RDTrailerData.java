@@ -2,7 +2,7 @@ package io.senftresearch.openrd.data;
 
 import io.senftresearch.openrd.encoding.RDEncoder;
 import io.senftresearch.openrd.encoding.commands.RDCommandSet;
-import io.senftresearch.openrd.encoding.commands.RDEndFileCommand;
+import io.senftresearch.openrd.encoding.commands.types.RDEndFileCommand;
 import io.senftresearch.openrd.encoding.commands.types.RDWriteOrRespondParamCommand;
 import io.senftresearch.openrd.encoding.commands.types.array.RDArrayBlockEndCommand;
 
