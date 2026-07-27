@@ -19,7 +19,7 @@ public class RDLayerColourSetCommand extends AbstractRDCommand {
     @Override
     public RDCommandArg[] getArgs() {
         return new RDCommandArg[]{
-                new RDCommandArg(RDCommandHex.RD_LAYER_COLOUR_SET, RDEncodingType.HEX),
+                new RDCommandArg(RDCommandHex.RD_LAYER_COLOUR_SET.getHexCode(), RDEncodingType.HEX),
                 new RDCommandArg(this.layerNumber, RDEncodingType.BYTE),
                 new RDCommandArg(this.colour.getRGBArray(), RDEncodingType.COLOUR)
         };

@@ -14,7 +14,11 @@ import io.senftresearch.openrd.encoding.commands.types.boundaries.RDDocumentPoin
 import io.senftresearch.openrd.encoding.commands.types.boundaries.RDFeedRepeatCommand;
 import io.senftresearch.openrd.encoding.commands.types.boundaries.RDProcessBoundingBoxCommand;
 import io.senftresearch.openrd.encoding.commands.types.element.*;
+import io.senftresearch.openrd.encoding.commands.types.layer.RDLayerColourSetCommand;
 import io.senftresearch.openrd.encoding.commands.types.layer.RDLayerSpeedCommand;
+import io.senftresearch.openrd.encoding.commands.types.part.RDPartPointsCommand;
+import io.senftresearch.openrd.encoding.commands.types.part.RDPartPointsExCommand;
+import io.senftresearch.openrd.encoding.commands.types.part.RDPartWorkModeCommand;
 import io.senftresearch.openrd.encoding.commands.types.process.ProcessType;
 import io.senftresearch.openrd.encoding.commands.types.process.RDProcessCommand;
 import io.senftresearch.openrd.encoding.commands.types.process.RDProcessRepeatCommand;
@@ -135,17 +139,15 @@ public class RDHeaderData implements RDData {
     }
 
     private void setLayerBoundingBoxes(RDLayer layer, int layerNumber, ByteArrayOutputStream stream) throws IOException{
-        int boundBoxTopLeftX = layer.boundingBox().topLeft().x();
-        int boundBoxTopLeftY = layer.boundingBox().topLeft().y();
-        int boundBoxBottomRightX = layer.boundingBox().bottomRight().x();
-        int boundBoxBottomRightY = layer.boundingBox().bottomRight().y();
-        stream.write(RDEncoder.encode("-bc-bb-bnn-bnn-bnn-bnn-",
-                "ca 06", layerNumber, layer.colour().getRGBArray(),
-                "ca 41", layerNumber, 0,
-                "e7 52", layerNumber, boundBoxTopLeftX, boundBoxTopLeftY,
-                "e7 53", layerNumber, boundBoxBottomRightX, boundBoxBottomRightY,
-                "e7 61", layerNumber, boundBoxTopLeftX, boundBoxTopLeftY,
-                "e7 62", layerNumber, boundBoxBottomRightX, boundBoxBottomRightY,""));
+
+        RDCommandSet commandSet = new RDCommandSet.RDCommandSetBuilder()
+                .withCommand(new RDLayerColourSetCommand(layer.colour(), layerNumber))
+                .withCommand(new RDPartWorkModeCommand(layerNumber))
+                .withCommand(new RDPartPointsCommand(layer.boundingBox(), layerNumber))
+                .withCommand(new RDPartPointsExCommand(layer.boundingBox(), layerNumber))
+                .build();
+
+        stream.write(RDEncoder.encode(commandSet));
     }
 
     private RDBoundingBox combineBoundingBoxes(RDBoundingBox boundingBox, RDLayer layer) {
