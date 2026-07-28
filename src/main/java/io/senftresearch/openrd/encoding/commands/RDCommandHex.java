@@ -1,6 +1,12 @@
 package io.senftresearch.openrd.encoding.commands;
 
+/**
+ * Enum that represents the various Commands (and their respective Hexes) that can be sent to a Rudia controller.
+ */
 public enum RDCommandHex {
+    /**
+     * Command that indicates the end of a {@code .rd file} and its content.
+     */
     RD_END_FILE("d7"),
     RD_RELATIVE_MOVE_HORIZONTAL("8a"),
     RD_RELATIVE_MOVE_VERTICAL("8b"),
