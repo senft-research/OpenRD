@@ -10,10 +10,17 @@ import java.util.Arrays;
 //     to test if it works on the Laser Cutter is an easy way to get tempted to use the devil's tools haha).
 //     To use this code in the final product would be unacceptable. Going to redo from scratch.
 public class RDUdp {
-    public static final int NETWORK_TIMEOUT = 3000; // msecs
+    //Developer Note: The default timeout before logic to handle non-received packets is executed.
+    public static final int NETWORK_TIMEOUT = 3000;
+
     public static final String INADDR_ANY_DOTTED = "0.0.0.0";
+
+    //Developer Note: As confirmed by third party docs, the source and dest are the default ports for the Rudia Controllers.
     public static final int SOURCE_PORT = 40200;
     public static final int DEST_PORT = 50200;
+
+    //Developer Note: This is the "Maximum Transmission Unit", but not sure why the max is 1470.
+    //TODO investigate why the max is 1470 for this MTU.
     public static final int MTU = 1470;
 
     public boolean verbose = false;
