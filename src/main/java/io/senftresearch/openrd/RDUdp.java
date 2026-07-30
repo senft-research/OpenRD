@@ -82,12 +82,17 @@ public class RDUdp {
 
             //TODO sending the buffer data to the laser cutter it seems. Not sure about the retry logic
             byte[] r = send(buf, start == 0);
-            //TODO What is the ACK in this instance? Is that the end of the message or?
+            //Developer Note: ACK stands for "acknowledgement", so this check is to see if the "r" (the reply) fist element
+            //                is the acknowledgement or not. This does also show this code doesn't do much with the reply
+            //                other than check for the ACK of the packet being sent. According to the third party Rudia
+            //                docs, this ACK is sent after every packet to ensure it has been received.
             if (r.length != 1 || r[0] != ACK) {
                 return r;
             }
             start += chunkSize;
         }
+        //Developer Note: The whole method returns null if the system seems to fail in terms of reply, this seems quite
+        //                brittle though.
         return null;
     }
 
