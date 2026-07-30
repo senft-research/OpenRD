@@ -74,7 +74,8 @@ public class RDUdpHandler {
         double retryDelaySecondsMax = 5.0;
 
         byte[] receivedPacketBuffer = new byte[8];
-
+        DatagramPacket sendPacket = new DatagramPacket(dataToSend, dataToSend.length, destinationHost, destinationPort);
+        socket.send(sendPacket);
         while (true){
             try{
                 DatagramPacket receivedPacket = new DatagramPacket(receivedPacketBuffer, receivedPacketBuffer.length);
