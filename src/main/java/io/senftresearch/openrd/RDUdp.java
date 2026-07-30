@@ -72,14 +72,14 @@ public class RDUdp {
             byte[] chksum = checksum(data, start, chunkSize);
             byte[] buf = new byte[2 + chunkSize];
 
-            //TODO what is the point of the buffer? Is it the checksum values? If so how do these work. I know from minimal
-            //     experience that checksums are used as a way to somewhat verify the data? But thats the extent of my knowledge.
+            //Developer Note: I am assuming this buffer array is purely here as a "tidy" way to add the checksum to the
+            //                front of the data to be sent, as arrays are typically immutable. So create a buffer with a
+            //                size that accounts for the 2 checksum elements, then copy the data directly to this new array
             buf[0] = chksum[0];
             buf[1] = chksum[1];
 
-            //TODO This I do get, it leaves the first 2 values of the buffer as the check sums, and the rest as the data
-            //     via copying the values from element 2 onwards. Still need to figure out what the checksum is for.
             System.arraycopy(data, start, buf, 2, chunkSize);
+
             //TODO sending the buffer data to the laser cutter it seems. Not sure about the retry logic
             byte[] r = send(buf, start == 0);
             //TODO What is the ACK in this instance? Is that the end of the message or?
