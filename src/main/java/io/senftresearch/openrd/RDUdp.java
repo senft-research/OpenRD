@@ -133,8 +133,10 @@ public class RDUdp {
                 //     checks.
                 return Arrays.copyOfRange(receivePacket.getData(), 0, receivePacket.getLength());
 
+                //Developer Note: `sock.recieve()` does actually throw a timeout exception.
             } catch (SocketTimeoutException e) {
 
+                //TODO at the moment the retry is always set to true, so it never fully times out. This seems odd.
                 if (!retry) {
                     throw new IOException("Network timeout or 'F' retry error simulated");
                 }
