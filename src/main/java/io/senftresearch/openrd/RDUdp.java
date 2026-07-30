@@ -33,7 +33,6 @@ public class RDUdp {
         this.destPort = port;
         this.destHost = InetAddress.getByName(host);
 
-        // Bind to all interfaces on the local source port
         InetAddress bindAddr = InetAddress.getByName(INADDR_ANY_DOTTED);
         this.sock = new DatagramSocket(localPort, bindAddr);
         this.sock.setSoTimeout(NETWORK_TIMEOUT);
@@ -51,6 +50,8 @@ public class RDUdp {
 
     public byte[] write(byte[] data) throws IOException, InterruptedException {
         int start = 0;
+        //TODO: Seems to take the length of the byte array and send it in "chunks". Need to look into why MTU is used
+        //      as the maximum chunk length
         int l = data.length;
 
         while (start < l) {
@@ -58,18 +59,21 @@ public class RDUdp {
             if (chunkSize > MTU) {
                 chunkSize = MTU;
             }
-
+            //TODO not sure what Checksums do in UDP / communication protocols. Need to research
             byte[] chksum = checksum(data, start, chunkSize);
             byte[] buf = new byte[2 + chunkSize];
 
-            // Construct the payload: checksum + data chunk
+            //TODO what is the point of the buffer? Is it the checksum values? If so how do these work. I know from minimal
+            //     experience that checksums are used as a way to somewhat verify the data? But thats the extent of my knowledge.
             buf[0] = chksum[0];
             buf[1] = chksum[1];
+
+            //TODO This I do get, it leaves the first 2 values of the buffer as the check sums, and the rest as the data
+            //     via copying the values from element 2 onwards. Still need to figure out what the checksum is for.
             System.arraycopy(data, start, buf, 2, chunkSize);
-
+            //TODO sending the buffer data to the laser cutter it seems. Not sure about the retry logic
             byte[] r = send(buf, start == 0);
-
-            // If response is not a single ACK byte, return the raw response
+            //TODO What is the ACK in this instance? Is that the end of the message or?
             if (r.length != 1 || r[0] != ACK) {
                 return r;
             }
@@ -78,6 +82,7 @@ public class RDUdp {
         return null;
     }
 
+    //TODO not looking at send logic yet, need to understand checksum first
     public byte[] send(byte[] ary, boolean retry) throws IOException, InterruptedException {
         if (this.chunkpause > 0.0) {
             Thread.sleep((long) (this.chunkpause * 1000));
@@ -88,33 +93,29 @@ public class RDUdp {
         byte[] receiveBuffer = new byte[8];
 
         while (true) {
-            // Send the packet
             DatagramPacket sendPacket = new DatagramPacket(ary, ary.length, destHost, destPort);
             sock.send(sendPacket);
 
             try {
-                // Receive the response
+
                 DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
                 sock.receive(receivePacket);
 
-                // Return exactly the slice of data that was received
+
                 return Arrays.copyOfRange(receivePacket.getData(), 0, receivePacket.getLength());
 
             } catch (SocketTimeoutException e) {
-                // Mimicking Python loop logic. If your original code implemented
-                // exponential backoff/retries inside the block, handle it here.
+
                 if (!retry) {
                     throw new IOException("Network timeout or 'F' retry error simulated");
                 }
 
-                // Exponential backoff logic based on your variable initializations
                 Thread.sleep((long) (retryDelaySec * 1000));
                 retryDelaySec = Math.min(retryDelaySec * 2, retryDelaySecMax);
             }
         }
     }
 
-    // Call this to clean up resources when done
     public void close() {
         if (sock != null && !sock.isClosed()) {
             sock.close();
