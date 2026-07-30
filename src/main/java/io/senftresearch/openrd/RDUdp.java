@@ -98,24 +98,39 @@ public class RDUdp {
 
     //TODO not looking at send logic yet, need to understand checksum first
     public byte[] send(byte[] ary, boolean retry) throws IOException, InterruptedException {
+        //Developer Note: The chunkpause option is there to determine the amount of pause to do before sending data? Not
+        //                sure as to why though?
+        //TODO Investigate the reason for the chunk pause, and why it is separate to the retry delay.
         if (this.chunkpause > 0.0) {
             Thread.sleep((long) (this.chunkpause * 1000));
         }
 
         double retryDelaySec = 0.2;
         double retryDelaySecMax = 5.0;
+
         byte[] receiveBuffer = new byte[8];
 
+        //TODO Why the param was named "ary" is not known, but seems rather silly as it is clearly the data to be sent.
         while (true) {
+            //TODO need to look into DatagramPacket in terms of Java and UDP, but seems to specify the host destination address and port).
             DatagramPacket sendPacket = new DatagramPacket(ary, ary.length, destHost, destPort);
+
+            //TODO The datagram socket is where the packet will be sent, that is setup during construction?
             sock.send(sendPacket);
 
             try {
-
+                //TODO tries to recieve the reply to the packet, but does nothing with it, other than take it out for
+                //     logic to check if its an ACK or not. Will display the reply for clarity as I want to see what the
+                //     contents looks like.
                 DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
+
+                //TODO the docs say this will block until the packet is recieved. So I can only assume that the packet itself is
+                //     just a representation of what it expects to recieve, not the data itself. (So the packet would be
+                //     empty until it actually recieves anything, and there seems to be 0 timeout logic?).
                 sock.receive(receivePacket);
 
-
+                //TODO And then of course it will return the packet as an array of bytes, for the main logic to do its
+                //     checks.
                 return Arrays.copyOfRange(receivePacket.getData(), 0, receivePacket.getLength());
 
             } catch (SocketTimeoutException e) {
@@ -123,7 +138,8 @@ public class RDUdp {
                 if (!retry) {
                     throw new IOException("Network timeout or 'F' retry error simulated");
                 }
-
+                //Developer Note: Seems I was mistaken and the Retry logic is actually tied to the retry boolean set when
+                //                the `RDUdp` instance is set up.
                 Thread.sleep((long) (retryDelaySec * 1000));
                 retryDelaySec = Math.min(retryDelaySec * 2, retryDelaySecMax);
             }
