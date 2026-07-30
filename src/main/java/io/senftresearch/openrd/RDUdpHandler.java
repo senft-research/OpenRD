@@ -43,9 +43,20 @@ public class RDUdpHandler {
     private double chunkPause = 0.0;
 
 
-    private DatagramSocket socket;
-    private InetAddress destinationHost;
-    private int destinationPort;
+    /**
+     * Represents the local socket that will be sending and receiving packets to / from the Rudia Controller.
+     */
+    private final DatagramSocket socket;
+
+    /**
+     * Represents the Ip Address of the destination of packets (i.e. the Rudia Controller).
+     */
+    private final InetAddress destinationHost;
+
+    /**
+     * Represents the Port of the destination of packets (typically the default port of 50200).
+     */
+    private final int destinationPort;
 
     public RDUdpHandler(String hostName) throws IOException {
         this(hostName, DESTINATION_PORT, SOURCE_PORT);
