@@ -8,14 +8,36 @@ import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+/**
+ * Responsible for handling of information via UDP to a Rudia Controller.
+ */
 public class RDUdpHandler {
+    /**
+     * How many milliseconds should the socket block for when sending packets, throwing a timeout exception if the
+     * threshold is reached.
+     */
     public static final int NETWORK_TIMEOUT_MS = 3000;
 
     private static final String INADDR_ANY_DOTTED = "0.0.0.0";
 
+    /**
+     * The default port that data is sent from when communicating with the Rudia Controller.
+     */
     private static final int SOURCE_PORT = 40200;
+
+    /**
+     * The default port that data is sent to on the Rudia Controller.
+     */
     private static final int DESTINATION_PORT = 50200;
+
+    /**
+     * The Maximum Transmission Unit of packages to be sent. I.e. how much data can be transmitted in one packet.
+     */
     private static final int MTU = 1470;
+
+    /**
+     * The default byte that represents that a package has been successfully received by the controller.
+     */
     private static final byte ACK = (byte) 0xC6;
 
     private double chunkPause = 0.0;
