@@ -38,11 +38,17 @@ public class RDUdp {
         this.sock.setSoTimeout(NETWORK_TIMEOUT);
     }
 
+
     public byte[] checksum(byte[] data, int start, int length) {
         int cs = 0;
         for (int i = start; i < start + length; i++) {
-            cs += (data[i] & 0xFF); // Convert to unsigned int before adding
+            // Developer Note: The data loops through the bytes of the message to be sent, and makes it an unsigned
+            //                 integer, then adds it to the "cs" (that should be called "checksum"... what is it with
+            //                 LLMs and acronyms that remove context?!)
+            cs += (data[i] & 0xFF);
         }
+        // Developer Note: Byte one is CS converted to a byte (which I assume would take the last 8 bits when cast and discard
+        //                 the rest?) and sets the first byte as cs but shifted by 8 bits (hence getting the first byte).
         byte b1 = (byte) (cs & 0xFF);
         byte b0 = (byte) ((cs >> 8) & 0xFF);
         return new byte[]{b0, b1};
@@ -59,7 +65,10 @@ public class RDUdp {
             if (chunkSize > MTU) {
                 chunkSize = MTU;
             }
-            //TODO not sure what Checksums do in UDP / communication protocols. Need to research
+            //Developer Note: The checksum is a 16 bit (hence 2 bytes, which is why its in a 2 element array, as each byte
+            //                is 8 bits) sum of all the message contents that is used to check the contents of the header / data.
+            //                The checksum is a way for the receiver to check the message is the same as sent. I.e. if the
+            //                sum is different to that is stated, then the receiver knows the message was corrupted.
             byte[] chksum = checksum(data, start, chunkSize);
             byte[] buf = new byte[2 + chunkSize];
 
