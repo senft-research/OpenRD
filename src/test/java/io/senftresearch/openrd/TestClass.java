@@ -52,7 +52,7 @@ class RuidaTest {
 
         String ruidaControllerIp = "10.0.0.100";
 
-        RDUdp udpClient = new RDUdp(ruidaControllerIp);
+        RDUdpHandler udpClient = new RDUdpHandler(ruidaControllerIp);
         try {
             System.out.println("Sending " + rdFileBytes.length + " bytes to Ruida Controller...");
 
