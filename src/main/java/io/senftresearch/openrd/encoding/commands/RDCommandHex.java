@@ -62,6 +62,9 @@ public enum RDCommandHex {
     RD_LAYER_DEVICE_ZERO("ca 01 10"),
     RD_AIR_ASSIST_ON("ca 01 13"),
     RD_AIR_ASSIST_OFF("ca 01 12"),
+    /**
+     * Command that specifies the colour to assign to a specific layer.
+     */
     RD_LAYER_COLOUR_SET("ca 06"),
     RD_PART_WORK_MODE("ca 41"),
     RD_PART_MIN_POINT("e7 52"),
