@@ -58,10 +58,23 @@ public class RDUdpHandler {
      */
     private final int destinationPort;
 
+    /**
+     * Constructor that will utilise the default destination and source ports typical of Rudia Controllers.
+     * @param hostName The IP of the host Rudia Controller.
+     * @throws IOException thrown when there is an I/O issue between the Device and Rudia Controller.
+     */
     public RDUdpHandler(String hostName) throws IOException {
         this(hostName, DESTINATION_PORT, SOURCE_PORT);
     }
 
+    /**
+     * Constructor that allows for setting of the destination and local port (in rare instances where the ports are
+     * different to the defaults).
+     * @param hostName The IP of the host Rudia Controller.
+     * @param destinationPort The port of the Rudia Controller.
+     * @param localPort The port of the Device.
+     * @throws IOException thrown when there is an I/O issue between the Device and Rudia Controller.
+     */
     public RDUdpHandler(String hostName, int destinationPort, int localPort) throws IOException {
         this.destinationPort = destinationPort;
         this.destinationHost = InetAddress.getByName(hostName);
