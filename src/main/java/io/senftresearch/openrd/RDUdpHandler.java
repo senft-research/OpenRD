@@ -84,6 +84,13 @@ public class RDUdpHandler {
         this.socket.setSoTimeout(NETWORK_TIMEOUT_MS);
     }
 
+    /**
+     * Write Byte Data to the Rudia Controller. Typically used to send {@code .rd} files to the Controller.
+     * @param data The data to send to the Rudia controller.
+     * @return The Data returned from the Rudia Controller (null if no data received).
+     * @throws IOException Thrown if there is an I/O exception during the writing and sending of the file.
+     * @throws InterruptedException Thrown if the process of sending the data is interrupted.
+     */
     public byte[] write(byte[] data) throws IOException, InterruptedException{
         int packetStart = 0;
         int dataLength = data.length;
@@ -111,7 +118,15 @@ public class RDUdpHandler {
         return null;
     }
 
-    public byte[] send (byte[] dataToSend, boolean shouldRetry) throws IOException, InterruptedException{
+    /**
+     * Sends data to the Rudia Controller.
+     * @param dataToSend The data to send
+     * @param shouldRetry True if the data should be resent on a timeout event.
+     * @return The data in the reply message (null if no reply is recieved).
+     * @throws IOException Thrown if there is an I/O exception during the sending of the data.
+     * @throws InterruptedException Thrown if the process of sending the data is interrupted.
+     */
+    private byte[] send (byte[] dataToSend, boolean shouldRetry) throws IOException, InterruptedException{
         if(this.chunkPause > 0.0){
             Thread.sleep((long) this.chunkPause*1000);
         }
@@ -142,6 +157,9 @@ public class RDUdpHandler {
 
     }
 
+    /**
+     * Close the socket being utilised for UDP operations.
+     */
     public void close(){
         if(socket != null && !socket.isClosed()){
             socket.close();
