@@ -55,7 +55,10 @@ public enum RDCommandHex {
      */
     RD_ABSOLUTE_CUT("a8"),
     RD_INIT_COMMAND("ca 22"),
-    RD_END_LAYER_COMMAND("ca 01 00"),
+    /**
+     * Command that specifies the end of a specific {@linkplain io.senftresearch.openrd.RDLayer layer}.
+     */
+    RD_END_LAYER("ca 01 00"),
     RD_PART("ca 02"),
     RD_ENABLE_LASER_TWO_OFFSET_ZERO("ca 01 30"),
     RD_ENABLE_LASER_TWO_OFFSET_ONE("ca 01 31"),
