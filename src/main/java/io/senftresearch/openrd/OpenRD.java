@@ -77,9 +77,22 @@ public class OpenRD {
         }
 
     }
+
+    /**
+     * Sets a layer to the currently in-progress {@code .rd} file. Note that the layers will be added to the file in order
+     * of being set.
+     * @param layer The layer to add to the {@code .rd} file.
+     */
     public void set(RDLayer layer){
         set(layer, this.FORCE_ABS);
     }
+
+    /**
+     * Sets a layer to the currently in-progress {@code .rd} file. Note that the layers will be added to the file in order
+     * of being set.
+     * @param layer The layer to add to the {@code .rd} file.
+     * @param forceAbs [Assumed] The numerical command for if forcing of absolute movements / cuts are set.
+     */
     public void set(RDLayer layer, int forceAbs){
         this.forceAbs = forceAbs;
         if (layer == null) {

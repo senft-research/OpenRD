@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+//TODO Before commiting to these Javadocs need to investigate why Trailer was separated from the Body with previous API authors.
 
 public class RDBodyData implements RDData{
     private ByteArrayOutputStream bodyData;

@@ -29,6 +29,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Data representing the "Header" of an {@code .rd} file. [Confirmed]The header is broken into the primary header (which
+ * establishes the origin and boundaries of the job) and individual headers for each layer (which define the bounding
+ * boxes and power levels for each layer).
+ */
 public class RDHeaderData implements RDData {
     private RDBoundingBox boundingBox;
     private final ByteArrayOutputStream headerData;
@@ -86,6 +91,12 @@ public class RDHeaderData implements RDData {
         }
     }
 
+    /**
+     * Sets the {@linkplain RDBoundingBox Boundaries} of the entire {@code .rd} file ,defining the area (in terms of
+     * x,y coordinates) in which the job will be conducted.
+     * @param stream The byte array stream representing the {@code .rd} file content.
+     * @throws IOException Thrown if any write operation to the byte stream fails.
+     */
     private void setBoundingBoxData(ByteArrayOutputStream stream) throws IOException {
         RDCommandSet boundingBoxSet = new RDCommandSet.RDCommandSetBuilder()
                 .withCommand(new RDFeedRepeatCommand(0,0))
@@ -97,6 +108,12 @@ public class RDHeaderData implements RDData {
         stream.write(RDEncoder.encode(boundingBoxSet));
     }
 
+    /**
+     * Sets the headers for each {@linkplain RDLayer Layer}, defining both their power levels, speed, and boundaries.
+     * @param layers The layers to create headers for.
+     * @param stream The byte array stream representing the {@code .rd} file content.
+     * @throws IOException Thrown if any write operation to the byte stream fails.
+     */
     private void setLayerHeaders(List<RDLayer> layers, ByteArrayOutputStream stream) throws IOException {
         int layerNumber = 0;
         for (RDLayer layer : layers) {
@@ -106,6 +123,14 @@ public class RDHeaderData implements RDData {
         }
     }
 
+    /**
+     * Sets both the power levels and speed of the layer within the Header.
+     * @param layer The layer to set.
+     * @param stream The byte array stream representing the {@code .rd} file content.
+     * @param layerNumber The number of the layer in relation to its ordering in the file (layers need to define their
+     *                   numerical value within the RD file, hence need to specify their number.
+     * @throws IOException Thrown if any write operation to the byte stream fails.
+     */
     private void setLayerSpeedAndPowerLevels(RDLayer layer, ByteArrayOutputStream stream, int layerNumber) throws IOException {
         List<RDPoint> powerArray = new ArrayList<>();
         while (powerArray.size() < 8) {
@@ -134,6 +159,15 @@ public class RDHeaderData implements RDData {
         stream.write(RDEncoder.encode(powerSet));
     }
 
+    /**
+     * Sets the {@linkplain RDBoundingBox boundaries} of a specified layer, defining the boundaries in which the layer
+     * will perform its job.
+     * @param layer The layer to set the boundaries of.
+     * @param layerNumber The number of the layer in relation to its ordering in the file (layers need to define their
+     *                   numerical value within the RD file, hence need to specify their number.
+     * @param stream The byte array stream representing the {@code .rd} file content.
+     * @throws IOException Thrown if any write operation to the byte stream fails.
+     * */
     private void setLayerBoundingBoxes(RDLayer layer, int layerNumber, ByteArrayOutputStream stream) throws IOException{
 
         RDCommandSet layerBoundingBoxSet = new RDCommandSet.RDCommandSetBuilder()

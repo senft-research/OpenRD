@@ -9,7 +9,7 @@ public class RDEndLayerCommand extends AbstractRDCommand {
     @Override
     public RDCommandArg[] getArgs() {
         return new RDCommandArg[]{
-                new RDCommandArg(RDCommandHex.RD_END_LAYER_COMMAND.getHexCode(), RDEncodingType.HEX)
+                new RDCommandArg(RDCommandHex.RD_END_LAYER.getHexCode(), RDEncodingType.HEX)
         };
     }
 }
