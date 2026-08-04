@@ -1,23 +1,73 @@
 package io.senftresearch.openrd.encoding.commands;
 
+/**
+ * <p>
+ *     Enum that represents the various Commands (and their respective Hexes) that can be sent to a Rudia controller.
+ * </p>
+ *
+ * <i>Developer Note: Any Enum Javadoc with "(Assumed)" present denotes an assumption about the command hex, and
+ * could be incorrect. Any incorrect documentation on Command Hexes should be flagged and actioned in an issue / PR.</i>
+ *
+ */
 public enum RDCommandHex {
+    /**
+     * Command that indicates the end of a {@code .rd file} and its content.
+     */
     RD_END_FILE("d7"),
+
+    /**
+     * Command that specifies a horizontal movement of the laser, relative to its current position (to save memory)
+     */
     RD_RELATIVE_MOVE_HORIZONTAL("8a"),
+
+    /**
+     * Command that specifies a vertical movement of the laser, relative to its current position (to save memory)
+     */
     RD_RELATIVE_MOVE_VERTICAL("8b"),
+
+    /**
+     * Command that specifies a movement of the laser (in x and y), relative to its current position (to save memory)
+     */
     RD_RELATIVE_MOVE("89"),
+
+    /**
+     * Command that specifies a horizontal cutting movement of the laser, relative to its current position (to save memory)
+     */
     RD_RELATIVE_CUT_HORIZONTAL("aa"),
+
+    /**
+     * Command that specifies a vertical cutting movement of the laser, relative to its current position (to save memory)
+     */
     RD_RELATIVE_CUT_VERTICAL("ab"),
+
+    /**
+     * Command that specifies a cutting movement of the laser (in x and y), relative to its current position (to save memory)
+     */
     RD_RELATIVE_CUT("a9"),
+
+    /**
+     * Command that specifies an absolute movement, typically (Assumed) called for the first point of a layer.
+     */
     RD_ABSOLUTE_MOVE("88"),
+
+    /**
+     * Command that specifies an absolute cutting movement, typically (Assumed) called for the first point of a layer.
+     */
     RD_ABSOLUTE_CUT("a8"),
     RD_INIT_COMMAND("ca 22"),
-    RD_END_LAYER_COMMAND("ca 01 00"),
+    /**
+     * Command that specifies the end of a specific {@linkplain io.senftresearch.openrd.RDLayer layer}.
+     */
+    RD_END_LAYER("ca 01 00"),
     RD_PART("ca 02"),
     RD_ENABLE_LASER_TWO_OFFSET_ZERO("ca 01 30"),
     RD_ENABLE_LASER_TWO_OFFSET_ONE("ca 01 31"),
     RD_LAYER_DEVICE_ZERO("ca 01 10"),
     RD_AIR_ASSIST_ON("ca 01 13"),
     RD_AIR_ASSIST_OFF("ca 01 12"),
+    /**
+     * Command that specifies the colour to assign to a specific layer.
+     */
     RD_LAYER_COLOUR_SET("ca 06"),
     RD_PART_WORK_MODE("ca 41"),
     RD_PART_MIN_POINT("e7 52"),

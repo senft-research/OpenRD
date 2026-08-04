@@ -8,7 +8,7 @@ import io.senftresearch.openrd.encoding.commands.types.array.RDArrayBlockEndComm
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
+//TODO need to investigate why Trailer was separated from the Body with previous API authors.
 public class RDTrailerData implements RDData{
 
     private ByteArrayOutputStream trailerData;
@@ -28,7 +28,7 @@ public class RDTrailerData implements RDData{
             this.trailerData = trailerDataStream;
         }
         catch (IOException e){
-
+            throw new RuntimeException("IOException thrown during writing of Trailer Data");
         }
 
     }
