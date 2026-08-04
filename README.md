@@ -4,6 +4,8 @@ OpenRD is an Open-Source Project for the purposes of replicating the communicati
 Controllers utilised by their line of Laser cutters. The library strives to not only allow a near identical ability to
 communicate with the controllers, but also fully document the protocol as fully as possible. 
 
+**Disclaimer:** _This software is not endorsed by Rudia, and should be utilised at the user's own risks_
+
 ***
 
 ## Why was this made?
